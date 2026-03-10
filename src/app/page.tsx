@@ -1,752 +1,649 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Wallet,
-  Send,
-  PlusCircle,
-  Coins,
-  Droplets,
-  RefreshCcw,
-  ExternalLink,
-  ChevronRight,
-  ShieldCheck,
+  ArrowRight,
+  Shield,
+  BarChart3,
+  Cpu,
+  Globe,
+  Command,
+  Plus,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 
-const BACKEND_URL = "http://localhost:3001";
+export default function LandingPage() {
+  const [activeStep, setActiveStep] = useState(0);
 
-export default function Home() {
-  const [publicKey, setPublicKey] = useState("");
-  const [balance, setBalance] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [message, setMessage] = useState({ text: "", type: "" });
-
-  const fetchBalance = async () => {
-    if (!publicKey) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/balance`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        // Although GET shouldn't have body, the backend expects it.
-        // We'll use POST or fix backend if needed, but the current backend is GET /balance with req.body.publicKey
-        // Note: Standard fetch GET doesn't support bodies. Let's see if we can use a query param or if we should fix backend.
-        // Looking at backend: app.get("/balance", async (req, res) => { if (!req.body.publicKey) ...
-        // Some node servers permit GET body, but browsers often skip it.
-        // I'll try it, if it fails I'll recommend a fix.
-        body: JSON.stringify({ publicKey }),
-      } as any);
-      const data = await res.json();
-      if (data.balance !== undefined) {
-        setBalance(data.balance);
-      } else {
-        setMessage({
-          text: data.error || "Failed to fetch balance",
-          type: "error",
-        });
-      }
-    } catch (e) {
-      setMessage({
-        text: "Backend unreachable. Ensure it's running on port 3001.",
-        type: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const showNotification = (text: string, type: "success" | "error") => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: "", type: "" }), 5000);
-  };
+  const steps = [
+    {
+      id: "Step 01",
+      title: "Connect & Secure",
+      description:
+        "Initialize your secure SolVault with hardware-level encryption and custom access policies.",
+      icon: <Shield />,
+      content: (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-2xl border-emerald-100">
+            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
+              <Shield size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-emerald-900">
+                Multi-Sig Enabled
+              </p>
+              <p className="text-xs text-emerald-600">
+                Enterprise grade security
+              </p>
+            </div>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-2xl border-gray-100">
+            <code className="text-xs text-gray-500 font-mono">
+              await vault.initialize({"{"}
+              <br /> &nbsp; owner: "7x...9a",
+              <br /> &nbsp; threshold: 2
+              <br /> {"}"});
+            </code>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "Step 02",
+      title: "Deploy Agent Team",
+      description:
+        "Our AI agents monitor liquidity, handle batch transfers, and optimize yield across the Solana ecosystem.",
+      icon: <Cpu />,
+      content: (
+        <div className="relative h-full flex flex-col justify-center">
+          <div className="agent-card p-6 rounded-3xl text-white shadow-2xl">
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div className="w-12 h-12 bg-white-opacity-10 rounded-full flex items-center justify-center border-white-opacity-20">
+                  <Command size={18} />
+                </div>
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-6 h-6 bg-white-opacity-5 rounded-full border-white-opacity-10 flex items-center justify-center"
+                    style={{
+                      top: 24 + Math.sin(i * 1.047) * 40,
+                      left: 24 + Math.cos(i * 1.047) * 40,
+                    }}
+                  >
+                    <Plus size={10} className="text-white-opacity-40" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <h4 className="text-center font-bold text-lg mb-1">
+              Deploy Your Agent Team
+            </h4>
+            <p className="text-center text-xs text-white-opacity-40">
+              Writers, designers, marketers, devs — all AI. No hiring needed.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "Step 03",
+      title: "Scale With Confidence",
+      description:
+        "Auto-scale your operations as your project grows. Full visibility into every transaction and agent action.",
+      icon: <BarChart3 />,
+      content: (
+        <div className="p-6 bg-white border-gray-100 rounded-3xl shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white">
+              <Globe size={16} />
+            </div>
+            <p className="text-sm font-bold text-black">Scaling Global</p>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-2 w-full bg-gray-100 rounded-full overflow-hidden"
+              >
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${30 + i * 20}%` }}
+                  transition={{ duration: 1, delay: i * 0.2 }}
+                  className="h-full bg-emerald-400"
+                />
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-gray-400">
+            Real-time performance metrics
+          </p>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <main className="container">
+    <div className="landing-container">
+      {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">
-          <Zap className="icon-primary" />
-          <span>SOLVAULT</span>
+        <div className="logo-group">
+          <div className="logo-icon">
+            <Zap size={24} />
+          </div>
+          <span className="logo-text">SOLVAULT</span>
         </div>
-        <div className="status">
-          <div className="status-dot"></div>
-          <span>Localnet Active</span>
+        <div className="nav-links">
+          <Link href="/dashboard" className="nav-link">
+            Dashboard
+          </Link>
+          <a href="#" className="nav-link">
+            Docs
+          </a>
+          <Link href="/dashboard" className="premium-btn py-2 px-6">
+            Launch App
+          </Link>
         </div>
       </nav>
 
-      <div className="hero">
+      {/* Hero Section */}
+      <section className="hero-section">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="hero-content"
+          transition={{ duration: 0.6 }}
         >
-          <h1>Solana Dev Toolbox</h1>
-          <p>
-            The ultimate interface for managing accounts, tokens, and stakings.
+          <h1 className="hero-title">
+            Automate Solana <br />
+            <span className="shimmer-text">With AI Precision</span>
+          </h1>
+          <p className="hero-subtitle">
+            The intelligent vault system for power users. Secure your assets,
+            run autonomous agent teams, and scale your operations.
           </p>
-        </motion.div>
-      </div>
-
-      <div className="dashboard-grid">
-        {/* Sidebar / Navigation */}
-        <aside className="sidebar glass-card">
-          <div className="nav-items">
-            {[
-              { id: "overview", icon: <Wallet size={20} />, label: "Overview" },
-              { id: "transfer", icon: <Send size={20} />, label: "Transfer" },
-              { id: "airdrop", icon: <Droplets size={20} />, label: "Airdrop" },
-              { id: "tools", icon: <PlusCircle size={20} />, label: "Tools" },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`nav-btn ${activeTab === item.id ? "active" : ""}`}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-                {activeTab === item.id && (
-                  <motion.div layoutId="pill" className="pill" />
-                )}
-              </button>
-            ))}
+          <div className="hero-buttons">
+            <Link href="/dashboard" className="premium-btn py-4 px-10 text-lg">
+              Get Started <ArrowRight size={20} />
+            </Link>
+            <button className="premium-btn secondary py-4 px-10 text-lg">
+              Watch Demo
+            </button>
           </div>
-        </aside>
+        </motion.div>
+      </section>
 
-        {/* Action Area */}
-        <section className="main-content">
-          <AnimatePresence mode="wait">
-            {activeTab === "overview" && (
+      {/* How it Works Section */}
+      <section className="how-it-works-section">
+        <div className="works-container shadow-2xl">
+          {/* Left Column */}
+          <div className="works-left">
+            <h2 className="works-title">
+              How SolVault <br /> works?
+            </h2>
+            <p className="works-description">
+              By 2030,{" "}
+              <span className="font-bold text-black">1-person unicorns</span>{" "}
+              will be the new reality. We're building the stack to make that{" "}
+              <span className="font-bold text-black">happen—today.</span>
+            </p>
+
+            <div className="step-buttons">
+              {steps.map((step, index) => (
+                <button
+                  key={step.id}
+                  onClick={() => setActiveStep(index)}
+                  className={`step-btn ${activeStep === index ? "active" : "inactive"}`}
+                >
+                  <span className="step-id">{step.id}</span>
+                  <div
+                    className={`step-arrow-container ${activeStep === index ? "active" : ""}`}
+                  >
+                    <ArrowRight size={20} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="works-right">
+            <AnimatePresence mode="wait">
               <motion.div
-                key="overview"
+                key={activeStep}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="tab-pane"
+                transition={{ duration: 0.4 }}
+                className="dynamic-content-wrapper"
               >
-                <div className="glass-card">
-                  <h2 className="section-title">Account Balance</h2>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      placeholder="Enter Public Key (e.g., 5MF4QD...)"
-                      value={publicKey}
-                      onChange={(e) => setPublicKey(e.target.value)}
-                    />
-                    <button
-                      onClick={fetchBalance}
-                      className="action-btn"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <RefreshCcw className="spinning" />
-                      ) : (
-                        "Check Balance"
-                      )}
-                    </button>
-                  </div>
-
-                  {balance !== null && (
-                    <motion.div
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="balance-display"
-                    >
-                      <div className="balance-value">
-                        <span className="amount">{balance}</span>
-                        <span className="unit">SOL</span>
-                      </div>
-                      <div className="balance-info">
-                        <ShieldCheck size={16} className="icon-success" />
-                        <span>Verified on Cluster</span>
-                      </div>
-                    </motion.div>
-                  )}
+                <div className="content-header">
+                  <h3 className="content-title">{steps[activeStep].title}</h3>
+                  <p className="content-description">
+                    {steps[activeStep].description}
+                  </p>
                 </div>
+
+                <div className="content-body">{steps[activeStep].content}</div>
               </motion.div>
-            )}
+            </AnimatePresence>
+            <div className="glow-overlay" />
+          </div>
+        </div>
+      </section>
 
-            {activeTab === "transfer" && (
-              <TransferView onNotify={showNotification} />
-            )}
-
-            {activeTab === "airdrop" && (
-              <AirdropView onNotify={showNotification} />
-            )}
-
-            {activeTab === "tools" && <ToolsView onNotify={showNotification} />}
-          </AnimatePresence>
-        </section>
-      </div>
-
-      <AnimatePresence>
-        {message.text && (
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 50, opacity: 0 }}
-            className={`notification ${message.type}`}
-          >
-            {message.type === "success" ? (
-              <ShieldCheck />
-            ) : (
-              <ShieldCheck color="red" />
-            )}
-            <span>{message.text}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Footer */}
+      <footer className="footer-section">
+        <div className="footer-container">
+          <div className="footer-logo">
+            <Zap size={20} />
+            <span>SOLVAULT</span>
+          </div>
+          <div className="footer-links">
+            <a href="#">Twitter</a>
+            <a href="#">Discord</a>
+            <a href="#">GitHub</a>
+          </div>
+          <div className="footer-copy">© 2026 SolVault Labs.</div>
+        </div>
+      </footer>
 
       <style jsx>{`
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 2rem;
+        .landing-container {
           min-height: 100vh;
+          background-color: var(--background);
+          color: white;
+          overflow-x: hidden;
         }
 
+        /* Navbar */
         .navbar {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 4rem;
+          padding: 1.5rem 2rem;
+          max-width: 1280px;
+          margin: 0 auto;
         }
 
-        .logo {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          font-weight: 800;
-          font-size: 1.5rem;
-          letter-spacing: 0.1rem;
-        }
-
-        .icon-primary {
-          color: var(--primary);
-        }
-
-        .status {
+        .logo-group {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: var(--card-bg);
-          padding: 6px 12px;
-          border-radius: 20px;
-          font-size: 0.85rem;
-          color: var(--text-dim);
-          border: 1px solid var(--card-border);
         }
 
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          background: var(--primary);
-          border-radius: 50%;
-          box-shadow: 0 0 8px var(--primary);
+        .logo-icon {
+          width: 40px;
+          height: 40px;
+          background-color: var(--primary);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: black;
         }
 
-        .hero {
-          margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-          font-size: 3.5rem;
+        .logo-text {
+          font-size: 1.25rem;
           font-weight: 900;
-          margin-bottom: 0.5rem;
-          background: linear-gradient(to right, #fff, #888);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          letter-spacing: -0.025em;
         }
 
-        .hero p {
-          color: var(--text-dim);
-          font-size: 1.1rem;
-        }
-
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: 240px 1fr;
+        .nav-links {
+          display: flex;
+          align-items: center;
           gap: 2rem;
         }
 
-        .sidebar {
-          height: fit-content;
-          padding: 1rem;
+        .nav-link {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.7);
+          transition: color 0.3s ease;
         }
 
-        .nav-items {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
+        .nav-link:hover {
+          color: white;
         }
 
-        .nav-btn {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          padding: 12px 16px;
-          border-radius: 12px;
-          color: var(--text-dim);
-          position: relative;
-          text-align: left;
-        }
-
-        .nav-btn:hover {
-          color: #fff;
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-btn.active {
-          color: #fff;
-        }
-
-        .pill {
-          position: absolute;
-          left: 0;
-          width: 3px;
-          height: 20px;
-          background: var(--primary);
-          border-radius: 0 4px 4px 0;
-        }
-
-        .section-title {
-          font-size: 1.25rem;
-          margin-bottom: 1.5rem;
-          font-weight: 600;
-        }
-
-        .input-group {
-          display: flex;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .action-btn {
-          background: var(--foreground);
-          color: #000;
-          padding: 0 24px;
-          border-radius: 8px;
-          font-weight: 600;
-          white-space: nowrap;
-        }
-
-        .action-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .balance-display {
-          background: rgba(20, 241, 149, 0.05);
-          border: 1px solid rgba(20, 241, 149, 0.2);
-          border-radius: 12px;
-          padding: 2rem;
+        /* Hero */
+        .hero-section {
+          padding: 5rem 2rem 8rem;
+          max-width: 1280px;
+          margin: 0 auto;
           text-align: center;
         }
 
-        .balance-value {
-          display: flex;
-          align-items: baseline;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
+        .hero-title {
+          font-size: clamp(3rem, 8vw, 6rem);
+          font-weight: 900;
+          margin-bottom: 2rem;
+          line-height: 1.1;
+          letter-spacing: -0.05em;
         }
 
-        .amount {
-          font-size: 3rem;
-          font-weight: 800;
-          color: var(--primary);
-        }
-
-        .unit {
+        .hero-subtitle {
           font-size: 1.25rem;
-          font-weight: 600;
-          opacity: 0.7;
+          color: rgba(255, 255, 255, 0.6);
+          max-width: 42rem;
+          margin: 0 auto 2.5rem;
+          line-height: 1.6;
+          font-weight: 300;
         }
 
-        .balance-info {
+        .hero-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+        }
+
+        /* How it works */
+        .how-it-works-section {
+          padding: 5rem 2rem;
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        .works-container {
+          background-color: white;
+          border-radius: 48px;
+          padding: 3rem;
+          display: flex;
+          flex-direction: row; /* Desktop direct flex */
+          gap: 4rem;
+          overflow: hidden;
+          min-height: 600px;
+        }
+
+        .works-left {
+          flex: 1;
+          max-width: 45%;
+        }
+
+        .works-title {
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 800;
+          color: #0a0a0b;
+          margin-bottom: 1.5rem;
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+        }
+
+        .works-description {
+          color: #6b7280;
+          font-size: 1.125rem;
+          margin-bottom: 3rem;
+          max-width: 24rem;
+          line-height: 1.6;
+        }
+
+        .step-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .step-btn {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem;
+          border-radius: 1.5rem;
+          transition: all 0.3s ease;
+          width: 100%;
+          text-align: left;
+        }
+
+        .step-btn.active {
+          background-color: #0a0a0b;
+          color: white;
+          transform: scale(1.02);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-btn.inactive {
+          background-color: #f3f4f6;
+          color: #0a0a0b;
+        }
+
+        .step-btn.inactive:hover {
+          background-color: #e5e7eb;
+        }
+
+        .step-id {
+          font-weight: 700;
+          font-size: 1.125rem;
+        }
+
+        .step-arrow-container {
+          transition: transform 0.3s ease;
+        }
+
+        .step-arrow-container.active {
+          transform: rotate(0);
+        }
+
+        .step-arrow-container:not(.active) {
+          transform: rotate(-45deg);
+          opacity: 0.3;
+        }
+
+        .works-right {
+          flex: 1;
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
-          font-size: 0.9rem;
-          color: var(--text-dim);
+          background-color: #f8fafc;
+          border-radius: 32px;
+          padding: 2rem;
         }
 
-        .spinning {
-          animation: spin 1s linear infinite;
+        .dynamic-content-wrapper {
+          width: 100%;
+          max-width: 24rem;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
+        .content-header {
+          margin-bottom: 2rem;
         }
 
-        .notification {
-          position: fixed;
-          bottom: 2rem;
-          right: 2rem;
-          padding: 1rem 2rem;
-          border-radius: 12px;
+        .content-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: black;
+          margin-bottom: 0.5rem;
+          font-family: var(--font-outfit);
+        }
+
+        .content-description {
+          font-size: 0.875rem;
+          color: #6b7280;
+          line-height: 1.5;
+        }
+
+        .content-body {
+          flex: 1;
           display: flex;
           align-items: center;
+          justify-content: center;
+          min-height: 300px;
+        }
+
+        /* Footer */
+        .footer-section {
+          padding: 5rem 2rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          margin-top: 5rem;
+        }
+
+        .footer-container {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 2rem;
+        }
+
+        .footer-logo {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          opacity: 0.5;
+          font-weight: 700;
+        }
+
+        .footer-links {
+          display: flex;
+          gap: 3rem;
+          font-size: 0.875rem;
+        }
+
+        .footer-links a {
+          color: rgba(255, 255, 255, 0.4);
+          transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+          color: white;
+        }
+
+        .footer-copy {
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Shared Utility Simulations */
+        .flex {
+          display: flex;
+        }
+        .flex-col {
+          flex-direction: column;
+        }
+        .gap-3 {
+          gap: 0.75rem;
+        }
+        .gap-4 {
           gap: 1rem;
-          backdrop-filter: blur(8px);
+        }
+        .p-4 {
+          padding: 1rem;
+        }
+        .p-6 {
+          padding: 1.5rem;
+        }
+        .bg-emerald-50 {
+          background-color: #ecfdf5;
+        }
+        .bg-emerald-500 {
+          background-color: #10b981;
+        }
+        .bg-emerald-400 {
+          background-color: #34d399;
+        }
+        .bg-gray-50 {
+          background-color: #f9fafb;
+        }
+        .bg-gray-100 {
+          background-color: #f3f4f6;
+        }
+        .rounded-2xl {
+          border-radius: 1rem;
+        }
+        .rounded-xl {
+          border-radius: 0.75rem;
+        }
+        .rounded-3xl {
+          border-radius: 1.5rem;
+        }
+        .border-emerald-100 {
+          border: 1px solid #d1fae5;
+        }
+        .border-gray-100 {
+          border: 1px solid #f3f4f6;
+        }
+        .text-emerald-900 {
+          color: #064e3b;
+        }
+        .text-emerald-600 {
+          color: #059669;
+        }
+        .text-white {
+          color: white;
+        }
+        .text-black {
+          color: black;
+        }
+        .text-mono {
+          font-family: monospace;
+        }
+        .font-bold {
+          font-weight: 700;
+        }
+        .shadow-sm {
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .shadow-2xl {
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .agent-card {
+          background-color: #0a0a0b;
+        }
+        .white-opacity-10 {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+        .white-opacity-5 {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+        .white-opacity-40 {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        .border-white-opacity-20 {
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .border-white-opacity-10 {
           border: 1px solid rgba(255, 255, 255, 0.1);
-          z-index: 100;
         }
 
-        .notification.success {
-          background: rgba(0, 230, 118, 0.1);
-          border-color: rgba(0, 230, 118, 0.2);
+        .glow-overlay {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at center,
+            rgba(20, 241, 149, 0.05),
+            transparent
+          );
+          filter: blur(100px);
+          z-index: -1;
         }
 
-        .notification.error {
-          background: rgba(255, 77, 77, 0.1);
-          border-color: rgba(255, 77, 77, 0.2);
+        @media (max-width: 900px) {
+          .works-container {
+            flex-direction: column;
+            padding: 1.5rem;
+          }
+          .works-left {
+            max-width: 100%;
+          }
+          .footer-container {
+            flex-direction: column;
+            text-align: center;
+          }
         }
 
         @media (max-width: 768px) {
-          .dashboard-grid {
-            grid-template-columns: 1fr;
+          .hero-section {
+            padding: 3rem 1.5rem;
           }
-          .hero h1 {
-            font-size: 2.5rem;
+          .hero-title {
+            font-size: 3rem;
           }
-        }
-      `}</style>
-    </main>
-  );
-}
-
-function TransferView({ onNotify }: { onNotify: any }) {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ reciever: "", amount: "" });
-
-  const handleSend = async () => {
-    if (!formData.reciever || !formData.amount) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/send`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reciever: formData.reciever,
-          amount: parseFloat(formData.amount),
-        }),
-      });
-      const data = await res.json();
-      if (data.signature) {
-        onNotify(
-          `Transfer successful! Signature: ${data.signature.slice(0, 8)}...`,
-          "success",
-        );
-        setFormData({ reciever: "", amount: "" });
-      } else {
-        onNotify(data.error || "Transfer failed", "error");
-      }
-    } catch (e) {
-      onNotify("Backend unreachable", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="glass-card"
-    >
-      <h2 className="section-title">Transfer SOL</h2>
-      <div className="form-stack">
-        <div className="input-field">
-          <label>Recipient Address</label>
-          <input
-            type="text"
-            placeholder="Recipient Public Key"
-            value={formData.reciever}
-            onChange={(e) =>
-              setFormData({ ...formData, reciever: e.target.value })
-            }
-          />
-        </div>
-        <div className="input-field">
-          <label>Amount (SOL)</label>
-          <input
-            type="number"
-            placeholder="0.0"
-            value={formData.amount}
-            onChange={(e) =>
-              setFormData({ ...formData, amount: e.target.value })
-            }
-          />
-        </div>
-        <button
-          onClick={handleSend}
-          className="glow-btn"
-          disabled={loading}
-          style={{ width: "100%", marginTop: "1rem" }}
-        >
-          {loading ? "Processing..." : "Send Tokens"}
-        </button>
-      </div>
-      <style jsx>{`
-        .form-stack {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        .input-field {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .input-field label {
-          font-size: 0.85rem;
-          color: var(--text-dim);
-          font-weight: 500;
-        }
-      `}</style>
-    </motion.div>
-  );
-}
-
-function AirdropView({ onNotify }: { onNotify: any }) {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ publicKey: "", amount: "1" });
-
-  const handleAirdrop = async () => {
-    if (!formData.publicKey) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/airdrop`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          publicKey: formData.publicKey,
-          amount: parseFloat(formData.amount),
-        }),
-      });
-      const data = await res.json();
-      if (data.signature) {
-        onNotify(
-          `Airdrop successful! Signature: ${data.signature.slice(0, 8)}...`,
-          "success",
-        );
-      } else {
-        onNotify(data.error || "Airdrop failed", "error");
-      }
-    } catch (e) {
-      onNotify("Backend unreachable", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="glass-card"
-    >
-      <h2 className="section-title">Request Airdrop</h2>
-      <p
-        style={{
-          color: "var(--text-dim)",
-          marginBottom: "2rem",
-          fontSize: "0.9rem",
-        }}
-      >
-        Get free SOL on Devnet/Testnet for testing your applications.
-      </p>
-      <div className="form-stack">
-        <div className="input-field">
-          <label>Wallet Address</label>
-          <input
-            type="text"
-            placeholder="Your Public Key"
-            value={formData.publicKey}
-            onChange={(e) =>
-              setFormData({ ...formData, publicKey: e.target.value })
-            }
-          />
-        </div>
-        <div className="input-field">
-          <label>Amount (SOL)</label>
-          <input
-            type="number"
-            value={formData.amount}
-            onChange={(e) =>
-              setFormData({ ...formData, amount: e.target.value })
-            }
-          />
-        </div>
-        <button
-          onClick={handleAirdrop}
-          className="glow-btn"
-          disabled={loading}
-          style={{ width: "100%", marginTop: "1rem" }}
-        >
-          {loading ? "Requesting..." : "Claim Airdrop"}
-        </button>
-      </div>
-      <style jsx>{`
-        .form-stack {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        .input-field {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .input-field label {
-          font-size: 0.85rem;
-          color: var(--text-dim);
-          font-weight: 500;
-        }
-      `}</style>
-    </motion.div>
-  );
-}
-
-function ToolsView({ onNotify }: { onNotify: any }) {
-  const [loading, setLoading] = useState<string | null>(null);
-
-  const performAction = async (endpoint: string, actionName: string) => {
-    setLoading(actionName);
-    try {
-      const res = await fetch(`${BACKEND_URL}/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      if (data.signature || data.address) {
-        onNotify(`${actionName} Successful!`, "success");
-        console.log("Result:", data);
-      } else {
-        onNotify(data.error || "Action failed", "error");
-      }
-    } catch (e) {
-      onNotify("Backend unreachable", "error");
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  return (
-    <div className="tools-grid">
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="glass-card tool-item"
-        onClick={() => performAction("createAccount", "Account Creation")}
-      >
-        <div className="tool-icon">
-          <PlusCircle className="icon-primary" />
-        </div>
-        <h3>Create New Account</h3>
-        <p>Generate a fresh Solana keypair and account.</p>
-        <div className="tool-footer">
-          {loading === "Account Creation" ? (
-            <RefreshCcw className="spinning" />
-          ) : (
-            <ChevronRight />
-          )}
-        </div>
-      </motion.div>
-
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="glass-card tool-item"
-        onClick={() => performAction("createToken", "Token Creation")}
-      >
-        <div className="tool-icon">
-          <Coins className="icon-secondary" />
-        </div>
-        <h3>Create SPL Token</h3>
-        <p>Initialize a new mint for your own SPL token.</p>
-        <div className="tool-footer">
-          {loading === "Token Creation" ? (
-            <RefreshCcw className="spinning" />
-          ) : (
-            <ChevronRight />
-          )}
-        </div>
-      </motion.div>
-
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="glass-card tool-item"
-        onClick={() =>
-          performAction("getAssociatedTokenAccountAddress", "ATA Resolution")
-        }
-      >
-        <div className="tool-icon">
-          <ExternalLink className="icon-accent" />
-        </div>
-        <h3>Resolve ATA</h3>
-        <p>Get the Associated Token Account for testing.</p>
-        <div className="tool-footer">
-          {loading === "ATA Resolution" ? (
-            <RefreshCcw className="spinning" />
-          ) : (
-            <ChevronRight />
-          )}
-        </div>
-      </motion.div>
-
-      <style jsx>{`
-        .tools-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 1.5rem;
-        }
-        .tool-item {
-          cursor: pointer;
-          transition: border-color 0.2s ease;
-          display: flex;
-          flex-direction: column;
-        }
-        .tool-item:hover {
-          border-color: var(--primary);
-        }
-        .tool-icon {
-          margin-bottom: 1.5rem;
-          background: rgba(255, 255, 255, 0.05);
-          width: 48px;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 12px;
-        }
-        .tool-item h3 {
-          font-size: 1.1rem;
-          margin-bottom: 0.5rem;
-        }
-        .tool-item p {
-          font-size: 0.85rem;
-          color: var(--text-dim);
-          flex: 1;
-          margin-bottom: 1.5rem;
-          line-height: 1.5;
-        }
-        .tool-footer {
-          display: flex;
-          justify-content: flex-end;
-          color: var(--text-dim);
-        }
-        .icon-secondary {
-          color: var(--secondary);
-        }
-        .icon-accent {
-          color: var(--accent);
         }
       `}</style>
     </div>
