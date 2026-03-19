@@ -27,7 +27,16 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
   }, [publicKey]);
 
   const handleAirdrop = async () => {
-    if (!formData.publicKey) return;
+    if (!formData.publicKey || formData.publicKey.length < 32) {
+      onNotify("Please enter a valid Solana Public Key", "error");
+      return;
+    }
+    const amt = parseFloat(formData.amount);
+    if (isNaN(amt) || amt <= 0 || amt > 5) {
+      onNotify("Amount must be between 0.1 and 5 SOL", "error");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`${backendUrl}/airdrop`, {
@@ -54,7 +63,7 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
         onNotify(data.error || "Airdrop failed", "error");
       }
     } catch (e) {
-      onNotify("Backend unreachable", "error");
+      onNotify("Infrastructure Offline - System unreachable", "error");
     } finally {
       setLoading(false);
     }
@@ -74,7 +83,7 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
           </label>
           <input
             type="text"
-            className="bg-white/5 border border-white/10 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all"
+            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
             placeholder="Address"
             value={formData.publicKey}
             onChange={(e) =>
@@ -88,7 +97,7 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
           </label>
           <input
             type="number"
-            className="bg-white/5 border border-white/10 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all"
+            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
             value={formData.amount}
             onChange={(e) =>
               setFormData({ ...formData, amount: e.target.value })

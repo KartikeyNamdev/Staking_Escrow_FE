@@ -24,10 +24,19 @@ export function Transfer({ onNotify, backendUrl }: TransferProps) {
 
   const handleSend = async () => {
     if (!publicKey) {
-      onNotify("Please connect your wallet first", "error");
+      onNotify("Wallet Authorization Required", "error");
       return;
     }
-    if (!formData.reciever || !formData.amount) return;
+    if (!formData.reciever || formData.reciever.length < 32) {
+      onNotify("Invalid Recipient Address", "error");
+      return;
+    }
+    const amt = parseFloat(formData.amount);
+    if (isNaN(amt) || amt <= 0) {
+      onNotify("Enter a valid SOL amount", "error");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`${backendUrl}/send`, {
@@ -39,27 +48,50 @@ export function Transfer({ onNotify, backendUrl }: TransferProps) {
           amount: formData.amount,
         }),
       });
+
+      if (!res.ok) {
+        throw new Error(`Server Error: ${res.status}`);
+      }
+
       const data = await res.json();
 
       if (data.transaction) {
-        const transaction = Transaction.from(
-          Buffer.from(data.transaction, "base64"),
-        );
-        const signature = await sendTransaction(transaction, connection);
+        try {
+          // Robust base64 decoding for browser environments
+          const binaryString = window.atob(data.transaction);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
 
-        onNotify(`Sent ${formData.amount} SOL`, "success", signature, {
-          from: publicKey.toBase58(),
-          to: formData.reciever,
-          amount: formData.amount,
-          type: "transfer",
-        });
-        setFormData({ reciever: "", amount: "" });
+          const transaction = Transaction.from(bytes);
+          
+          const signature = await sendTransaction(transaction, connection);
+
+          onNotify(`Sent ${formData.amount} SOL`, "success", signature, {
+            from: publicKey.toBase58(),
+            to: formData.reciever,
+            amount: formData.amount,
+            type: "transfer",
+          });
+          setFormData({ reciever: "", amount: "" });
+        } catch (walletError: any) {
+          console.error("Wallet Error:", walletError);
+          const errorMsg = walletError.message || "";
+          if (errorMsg.includes("User rejected")) {
+            onNotify("Transaction cancelled by user", "error");
+          } else if (errorMsg.includes("insufficient funds")) {
+            onNotify("Insufficient funds in wallet", "error");
+          } else {
+            onNotify(`Wallet Error: ${errorMsg.slice(0, 50)}...`, "error");
+          }
+        }
       } else {
-        onNotify(data.error || "Transfer failed", "error");
+        onNotify(data.error || "Transaction Execution Failed", "error");
       }
     } catch (e: any) {
-      console.error(e);
-      onNotify(e.message || "Action failed", "error");
+      console.error("Transfer Error:", e);
+      onNotify(e.name === "SyntaxError" ? "Invalid Server Response" : (e.message || "Infrastructure Offline"), "error");
     } finally {
       setLoading(false);
     }
@@ -79,7 +111,7 @@ export function Transfer({ onNotify, backendUrl }: TransferProps) {
           </label>
           <input
             type="text"
-            className="bg-white/5 border border-white/10 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all"
+            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
             placeholder="PublicKey"
             value={formData.reciever}
             onChange={(e) =>
@@ -93,7 +125,7 @@ export function Transfer({ onNotify, backendUrl }: TransferProps) {
           </label>
           <input
             type="number"
-            className="bg-white/5 border border-white/10 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all"
+            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
             placeholder="0.00"
             value={formData.amount}
             onChange={(e) =>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { HistoryItem, NotificationMessage } from "@/types/dashboard";
+import { toast } from "@/hooks/useToast";
 
 const BACKEND_URL = "http://localhost:3001";
 
@@ -21,10 +22,6 @@ export function useDashboard() {
       setPublicKey("");
     }
   }, [walletPublicKey]);
-  const [message, setMessage] = useState<NotificationMessage>({
-    text: "",
-    type: "",
-  });
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   // Load history from localStorage on mount
@@ -70,17 +67,14 @@ export function useDashboard() {
       signature?: string,
       metadata?: any,
     ) => {
-      setMessage({ text, type, signature });
-
-      if (signature && type === "success" && metadata) {
-        addToHistory(text, metadata);
+      if (type === "success") {
+        toast.success(text, metadata?.to ? `To: ${metadata.to.slice(0, 10)}...` : undefined, signature);
+        if (signature && metadata) {
+          addToHistory(text, { ...metadata, signature });
+        }
+      } else {
+        toast.error(text);
       }
-
-      const duration = type === "error" ? 5000 : 10000;
-      setTimeout(
-        () => setMessage({ text: "", type: "", signature: undefined }),
-        duration,
-      );
     },
     [addToHistory],
   );
@@ -121,8 +115,6 @@ export function useDashboard() {
     loading,
     activeTab,
     setActiveTab,
-    message,
-    setMessage,
     history,
     fetchBalance,
     showNotification,

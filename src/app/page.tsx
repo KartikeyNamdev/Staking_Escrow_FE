@@ -16,11 +16,15 @@ import {
   Fingerprint,
   Activity,
   Boxes,
+  Play,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import { VideoBackground } from "@/components/ui/VideoBackground";
 
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
+  const [showDemo, setShowDemo] = useState(false);
 
   const steps = [
     {
@@ -30,29 +34,28 @@ export default function LandingPage() {
         "Initialize your secure SolVault with hardware-level encryption and custom access policies.",
       icon: <Shield />,
       content: (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
-              <Shield size={20} />
+        <div className="flex flex-col gap-4 relative z-10">
+          <div className="flex items-center gap-4 p-5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 backdrop-blur-md">
+            <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+              <Shield size={24} />
             </div>
             <div>
-              <p className="text-sm font-bold text-emerald-900">
-                Multi-Sig Enabled
+              <p className="text-sm font-black text-emerald-400 uppercase tracking-tight">
+                Multi-Sig Active
               </p>
-              <p className="text-xs text-emerald-600">
-                Enterprise grade security
+              <p className="text-[10px] text-emerald-400/60 font-medium">
+                Hardware-level security
               </p>
             </div>
           </div>
-          <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-            <code className="text-xs text-gray-500 font-mono leading-relaxed">
-              await vault.initialize({"{"}
-              <br />
-              &nbsp; owner: "7x...9a",
-              <br />
-              &nbsp; threshold: 2<br />
-              {"}"});
-            </code>
+          <div className="p-5 bg-white/5 rounded-2xl border border-white/10 font-mono text-[11px] text-white/50 leading-relaxed">
+            <span className="text-primary/70">await</span> vault.initialize(
+            {"{"}
+            <br />
+            &nbsp; <span className="text-white/80">owner:</span> "7x...9a",
+            <br />
+            &nbsp; <span className="text-white/80">threshold:</span> 2<br />
+            {"}"});
           </div>
         </div>
       ),
@@ -110,25 +113,25 @@ export default function LandingPage() {
         "Auto-scale your operations as your project grows. Full visibility into every transaction and agent action.",
       icon: <BarChart3 />,
       content: (
-        <div className="p-8 bg-white border border-gray-100 rounded-[40px] shadow-sm w-full">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white">
-              <Globe size={20} />
+        <div className="p-8 bg-white/3 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-md w-full relative z-10">
+          <div className="flex items-center gap-4 mb-8 text-left">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-black">
+              <Globe size={24} />
             </div>
             <div>
-              <p className="text-sm font-bold text-black leading-none">
+              <p className="text-base font-black text-white uppercase tracking-tight">
                 Global Scaling
               </p>
-              <p className="text-[10px] text-gray-400 font-medium">
-                Cross-chain potential
+              <p className="text-[10px] text-white/40 font-medium uppercase tracking-[0.2em]">
+                Autonomous expansion
               </p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 mb-8">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-2 w-full bg-gray-100 rounded-full overflow-hidden"
+                className="h-2 w-full bg-white/5 rounded-full overflow-hidden"
               >
                 <motion.div
                   initial={{ width: 0 }}
@@ -139,11 +142,13 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div className="mt-6 pt-6 border-t border-gray-50 flex justify-between items-center text-[10px]">
-            <span className="text-gray-400 font-bold uppercase tracking-widest">
-              Growth Rate
+          <div className="pt-6 border-t border-white/5 flex justify-between items-center text-[10px]">
+            <span className="text-white/30 font-black uppercase tracking-widest">
+              Active Scaling Nodes
             </span>
-            <span className="text-emerald-500 font-black">+124.5%</span>
+            <span className="text-primary font-black uppercase tracking-widest">
+              Operational
+            </span>
           </div>
         </div>
       ),
@@ -185,6 +190,13 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative px-6 py-20 md:py-32 flex flex-col items-center text-center overflow-hidden">
+        {/* Background Video */}
+        <VideoBackground
+          src="/video.mp4"
+          overlayOpacity={0.65}
+          className="opacity-40"
+        />
+
         {/* Background Gradients */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
 
@@ -199,7 +211,7 @@ export default function LandingPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
-            v2.0 Beta is live
+            v1.0 Beta is live
           </div>
 
           <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-black leading-[0.9] tracking-[-0.06em] mb-8 uppercase">
@@ -218,7 +230,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/dashboard"
-              className="group px-12 py-5 bg-primary text-black font-black text-lg rounded-[24px] flex items-center gap-3 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(20,241,149,0.3)] transition-all active:scale-95"
+              className="group px-12 py-5 bg-primary text-black font-black text-md rounded-[24px] flex items-center gap-3 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(20,241,149,0.3)] transition-all active:scale-95"
             >
               Get Started
               <ArrowRight
@@ -226,7 +238,14 @@ export default function LandingPage() {
                 className="group-hover:translate-x-1 transition-transform"
               />
             </Link>
-            <button className="px-12 py-5 bg-white/5 border border-white/10 text-white font-black text-lg rounded-[24px] hover:bg-white/10 transition-all">
+            <button
+              onClick={() => setShowDemo(true)}
+              className="px-12 py-5 bg-white/5 border border-white/10 text-white font-black text-md rounded-[24px] hover:bg-white/10 transition-all flex items-center gap-2 group"
+            >
+              <Play
+                size={18}
+                className="group-hover:scale-110 group-hover:fill-current transition-all"
+              />
               Watch Demo
             </button>
           </div>
@@ -282,26 +301,23 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Abstract Visual for Core Engine */}
-              <div className="hidden lg:flex absolute bottom-8 right-12 w-64 h-32 bg-white/5 rounded-3xl border border-white/10 p-4 backdrop-blur-md -rotate-2 flex-col gap-2">
-                <div className="h-2 w-full bg-primary/20 rounded-full overflow-hidden">
-                  <motion.div
-                    animate={{ x: ["-100%", "100%"] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    className="h-full w-1/2 bg-primary"
-                  />
-                </div>
-                <div className="text-[10px] font-mono text-white/30 truncate">
-                  PENDING_TX: 5mK8...3xQ
-                </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-6 bg-white/5 rounded-lg" />
-                  ))}
+              <div className="hidden lg:flex absolute bottom-8 right-12 w-64 h-32 bg-white/5 rounded-3xl border border-white/10 p-0 backdrop-blur-md -rotate-2 overflow-hidden shadow-2xl">
+                <VideoBackground src="/video2.mp4" overlayOpacity={0.15} />
+                <div className="relative z-10 p-4 w-full h-full flex flex-col gap-2 pointer-events-none">
+                  <div className="h-2 w-full bg-primary/20 rounded-full overflow-hidden">
+                    <motion.div
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="h-full w-1/2 bg-primary"
+                    />
+                  </div>
+                  <div className="text-[10px] font-mono text-white/50 truncate">
+                    SYNCING_CLUSTER: SOLANA_MAINNET
+                  </div>
                 </div>
               </div>
             </div>
@@ -309,8 +325,13 @@ export default function LandingPage() {
 
           {/* Card 2: Identity & Security */}
           <div className="col-span-12 md:col-span-4 bg-[#0a0a0b] border border-white/10 rounded-[40px] p-8 relative overflow-hidden group">
+            <VideoBackground
+              src="/video3.mp4"
+              overlayOpacity={0.7}
+              className="opacity-60"
+            />
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mb-16 blur-3xl" />
-            <div className="h-full flex flex-col items-center text-center justify-center">
+            <div className="h-full flex flex-col items-center text-center justify-center relative z-10">
               <div className="w-20 h-20 bg-white/5 rounded-full border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Fingerprint size={32} className="text-primary" />
               </div>
@@ -324,8 +345,13 @@ export default function LandingPage() {
           </div>
 
           {/* Card 3: Token Forge */}
-          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[40px] p-8 flex flex-col group hover:border-primary/30 transition-all">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/50 mb-6 group-hover:text-primary transition-colors">
+          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[40px] p-8 flex flex-col group hover:border-primary/30 transition-all relative overflow-hidden">
+            <VideoBackground
+              src="/video4.mp4"
+              overlayOpacity={0.75}
+              className="opacity-50"
+            />
+            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/50 mb-6 group-hover:text-primary transition-colors relative z-10">
               <Boxes size={24} />
             </div>
             <h3 className="text-xl font-bold uppercase mb-4 tracking-tighter">
@@ -393,93 +419,107 @@ export default function LandingPage() {
       </section>
 
       {/* How it Works Section */}
-      <section className="px-6 py-24 md:py-40 max-w-[1300px] mx-auto">
-        <div className="bg-white rounded-[64px] p-8 md:p-16 flex flex-col lg:flex-row gap-16 lg:gap-24 overflow-hidden relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-          <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-white to-gray-50 -z-10" />
-
-          {/* Left Column */}
+      <section className="px-6 py-24 md:py-48 max-w-[1300px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+          {/* Left Column: Navigation and Narrative */}
           <div className="flex-1 flex flex-col justify-center">
-            <h2 className="text-5xl md:text-7xl font-black text-black leading-[0.9] tracking-tighter mb-8 uppercase">
-              How <br className="hidden md:block" />
-              <span className="text-emerald-500">SolVault</span>
-              <br />
-              works?
-            </h2>
-            <p className="text-gray-400 text-lg md:text-xl font-medium mb-12 max-w-md leading-relaxed tracking-tight">
-              By 2030,{" "}
-              <span className="text-black font-black">1-person unicorns</span>{" "}
-              will be the new reality. We&apos;re building the infrastructure to
-              make that{" "}
-              <span className="text-black font-black underline decoration-emerald-500 decoration-4">
-                happen today.
-              </span>
-            </p>
+            <div className="mb-16">
+              <h2 className="text-6xl md:text-8xl font-black text-white leading-[0.85] tracking-tighter mb-8 uppercase">
+                Simple. <br />
+                <span className="text-primary italic">Powerful.</span>
+                <br />
+                Proven.
+              </h2>
+              <p className="text-white/40 text-lg md:text-xl font-medium max-w-md leading-relaxed tracking-tight group">
+                Scale from <span className="text-white">zero to hero</span> with
+                our streamlined pipeline. Designed for the next generation of{" "}
+                <span className="text-primary underline decoration-2 underline-offset-4">
+                  autonomous builders.
+                </span>
+              </p>
+            </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {steps.map((step, index) => (
                 <button
                   key={step.id}
                   onClick={() => setActiveStep(index)}
                   className={`
-                    group flex justify-between items-center p-6 md:p-8 rounded-[32px] transition-all duration-500 text-left
+                    group relative flex items-center gap-6 p-6 rounded-[32px] transition-all duration-500 text-left overflow-hidden
                     ${
                       activeStep === index
-                        ? "bg-black text-white scale-[1.02] shadow-2xl"
-                        : "bg-gray-100/50 text-black hover:bg-gray-100"
+                        ? "bg-white/5 border border-white/10 ring-1 ring-white/10"
+                        : "hover:bg-white/2 border border-transparent"
                     }
                   `}
                 >
-                  <div className="flex flex-col gap-1">
-                    <span
-                      className={`text-[10px] font-black uppercase tracking-[0.2em] ${activeStep === index ? "text-primary/70" : "text-gray-400"}`}
-                    >
-                      {step.id}
-                    </span>
-                    <span className="text-xl md:text-2xl font-black tracking-tight uppercase">
-                      {step.title}
-                    </span>
-                  </div>
                   <div
                     className={`
-                    w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-700
-                    ${activeStep === index ? "bg-white/10 text-primary rotate-0" : "bg-white text-gray-300 -rotate-45 opacity-0 md:opacity-100"}
+                    w-12 h-12 flex items-center justify-center rounded-2xl font-black transition-all duration-500 shrink-0
+                    ${activeStep === index ? "bg-primary text-black scale-110" : "bg-white/5 text-white/30 group-hover:text-white/50"}
                   `}
                   >
-                    <ArrowRight size={20} />
+                    {index + 1}
                   </div>
+                  <div>
+                    <h4
+                      className={`text-xl font-black tracking-tight uppercase transition-colors ${activeStep === index ? "text-white" : "text-white/30"}`}
+                    >
+                      {step.title}
+                    </h4>
+                  </div>
+                  {activeStep === index && (
+                    <motion.div
+                      layoutId="step-glow"
+                      className="absolute inset-0 bg-primary/5 -z-10"
+                    />
+                  )}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="flex-[1.2] relative min-h-[500px] lg:min-h-auto flex items-center justify-center bg-gray-50/50 rounded-[48px] border border-gray-100 shadow-inner">
+          <div className="flex-[1.4] w-full aspect-square md:aspect-auto lg:min-h-[700px] relative bg-white/2 border border-white/5 rounded-[64px] flex items-center justify-center overflow-hidden shadow-2xl backdrop-blur-3xl">
+            {/* Background Video for Right Panel */}
+            <VideoBackground
+              src="/video5.mp4"
+              overlayOpacity={0.5}
+              className="opacity-80"
+            />
+
+            {/* Visual Flair Background */}
+            <div className="absolute top-0 right-0 w-full h-full bg-linear-to-br from-primary/10 via-transparent to-transparent opacity-50" />
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px]" />
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep}
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 1.05, y: -20 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-[450px] p-6 text-center lg:text-left h-full flex flex-col"
+                initial={{ opacity: 0, scale: 0.9, y: 30, rotateY: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0, rotateY: 0 }}
+                exit={{ opacity: 0, scale: 1.1, y: -30, rotateY: -20 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-[500px] p-8 md:p-12 relative z-10"
               >
-                <div className="mb-8 block">
-                  <h3 className="text-3xl font-black text-black uppercase tracking-tighter mb-4">
+                <div className="mb-12 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-6">
+                    {steps[activeStep].id}
+                  </div>
+                  <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
                     {steps[activeStep].title}
                   </h3>
-                  <p className="text-gray-500 text-sm md:text-base font-medium leading-relaxed">
+                  <p className="text-white/40 text-base md:text-lg font-medium leading-relaxed">
                     {steps[activeStep].description}
                   </p>
                 </div>
 
-                <div className="grow flex items-center justify-center">
-                  {steps[activeStep].content}
+                <div className="relative group">
+                  <div className="absolute -inset-8 bg-primary/20 rounded-[48px] blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-1000" />
+                  <div className="relative transform transition-transform duration-700 group-hover:scale-[1.02]">
+                    {steps[activeStep].content}
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
-
-            {/* Visual Flair */}
-            <div className="absolute inset-0 bg-radial-gradient from-primary/5 to-transparent blur-3xl -z-10" />
           </div>
         </div>
       </section>
@@ -495,13 +535,16 @@ export default function LandingPage() {
           </div>
 
           <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-            <a href="#" className="hover:text-primary transition-colors">
+            {/* <a href="#" className="hover:text-primary transition-colors">
               Twitter
             </a>
             <a href="#" className="hover:text-primary transition-colors">
               Discord
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            </a> */}
+            <a
+              href="https://github.com/KartikeyNamdev/solana-staking-escrow-vault"
+              className="hover:text-primary text-green-600 transition-colors"
+            >
               GitHub
             </a>
           </div>
@@ -511,6 +554,49 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Video Demo Modal */}
+      <AnimatePresence>
+        {showDemo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-100 flex items-center justify-center p-6 md:p-12"
+          >
+            <div
+              className="absolute inset-0 bg-background/90 backdrop-blur-xl"
+              onClick={() => setShowDemo(false)}
+            />
+
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-5xl aspect-video bg-white/5 border border-white/10 rounded-[40px] overflow-hidden shadow-2xl relative group"
+            >
+              <button
+                onClick={() => setShowDemo(false)}
+                className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white z-20 backdrop-blur-md transition-all active:scale-95"
+              >
+                <X size={24} />
+              </button>
+
+              {/* Vimeo Video Embed */}
+              <div className="w-full h-full bg-black">
+                <iframe
+                  src="https://player.vimeo.com/video/1175088411?autoplay=1&badge=0&autopause=0&player_id=0&app_id=58479"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                  className="w-full h-full"
+                  title="SolVault Platform Demo"
+                ></iframe>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

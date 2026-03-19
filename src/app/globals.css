@@ -43,28 +43,67 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
 
-  /* Custom Wallet Adapter Styles */
+  /* Premium Wallet Adapter Styling Overrides */
   .wallet-adapter-button {
-    @apply h-11 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all scale-100 hover:scale-[1.03] active:scale-95;
-    background-color: var(--primary) !important;
+    @apply h-12 px-8 !rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300;
+    background: var(--primary) !important;
     color: #000 !important;
-    line-height: normal !important;
+    box-shadow: 0 0 20px rgba(20, 241, 149, 0.2);
+  }
+
+  .wallet-adapter-button:hover {
+    @apply scale-[1.02] -translate-y-0.5;
+    background: #fff !important;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+  }
+
+  .wallet-adapter-button:not([disabled]):active {
+    @apply scale-95;
   }
 
   .wallet-adapter-button-trigger {
     @apply bg-primary hover:bg-white text-black;
   }
 
+  /* Dropdown Positioning & Layout */
+  .wallet-adapter-dropdown {
+    @apply relative;
+  }
+
+  .wallet-adapter-dropdown-list {
+    @apply !mt-3 !p-2 !bg-[#0a0a0b]/95 !backdrop-blur-2xl !border !border-white/10 !rounded-2xl !shadow-2xl !list-none !transition-all;
+    grid-gap: 4px !important;
+  }
+
+  .wallet-adapter-dropdown-list-item {
+    @apply !px-4 !py-3 !rounded-xl !text-[10px] !font-bold !uppercase !tracking-wider !text-white/60 hover:!text-white hover:!bg-white/5 !transition-all;
+  }
+
+  /* Modal Enhancements */
   .wallet-adapter-modal-wrapper {
-    @apply bg-background border border-white/10 rounded-[32px];
-    font-family: var(--font-inter), sans-serif !important;
+    @apply !bg-[#050505] !border !border-white/5 !rounded-[40px] !shadow-[0_0_100px_rgba(0,0,0,0.8)];
+    padding: 2.5rem !important;
   }
 
   .wallet-adapter-modal-button-close {
-    @apply bg-white/5 hover:bg-white/10 rounded-full;
+    @apply !bg-white/5 hover:!bg-white/10 hover:!rotate-90 !transition-all !rounded-full !p-2;
   }
 
   .wallet-adapter-modal-title {
-    @apply text-white font-black uppercase tracking-tighter text-2xl;
+    @apply !text-white !font-black !uppercase !tracking-tighter !text-3xl !mb-8 !border-b !border-white/5 !pb-4;
+  }
+
+  .wallet-adapter-modal-list {
+    @apply !grid !grid-cols-1 !gap-3;
+  }
+
+  .wallet-adapter-modal-list .wallet-adapter-button {
+    @apply !h-14 !bg-white/5 hover:!bg-white/10 !text-white !rounded-2xl !border !border-white/5 !font-bold !normal-case !tracking-normal;
+    color: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .wallet-adapter-modal-list .wallet-adapter-button i {
+    @apply !w-8 !h-8;
   }
 }
