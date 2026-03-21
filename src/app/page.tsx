@@ -216,7 +216,7 @@ export default function LandingPage() {
 
           <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-black leading-[0.9] tracking-[-0.06em] mb-8 uppercase">
             Automate <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary/40 bg-[length:200%_auto] animate-shimmer">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-white to-primary/40 bg-[length:200%_auto] animate-shimmer">
               Solana
             </span>
           </h1>

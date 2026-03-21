@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { HistoryItem, NotificationMessage } from "@/types/dashboard";
 import { toast } from "@/hooks/useToast";
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = "https://solana-staking-escrow-vault.onrender.com";
 
 export function useDashboard() {
   const { publicKey: walletPublicKey } = useWallet();
@@ -68,7 +68,11 @@ export function useDashboard() {
       metadata?: any,
     ) => {
       if (type === "success") {
-        toast.success(text, metadata?.to ? `To: ${metadata.to.slice(0, 10)}...` : undefined, signature);
+        toast.success(
+          text,
+          metadata?.to ? `To: ${metadata.to.slice(0, 10)}...` : undefined,
+          signature,
+        );
         if (signature && metadata) {
           addToHistory(text, { ...metadata, signature });
         }
