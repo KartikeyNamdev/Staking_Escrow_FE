@@ -12,7 +12,7 @@ export function Toaster() {
     const unsubscribe = toastStore.subscribe((t) => {
       setToasts([...t].reverse());
     });
-    return () => unsubscribe();
+    return () => { unsubscribe(); };
   }, []);
 
   const copyToClipboard = (text: string) => {

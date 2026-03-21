@@ -28,7 +28,7 @@ const listeners = new Set<Listener>();
 export const toastStore = {
   subscribe(listener: Listener) {
     listeners.add(listener);
-    return () => listeners.delete(listener);
+    return () => { listeners.delete(listener); };
   },
   add(toast: Omit<ToastMessage, "id">) {
     const id = Math.random().toString(36).substring(2, 9);
