@@ -586,7 +586,7 @@ export default function LandingPage() {
               {/* Vimeo Video Embed */}
               <div className="w-full h-full bg-black">
                 <iframe
-                  src="https://vimeo.com/1175687632?share=copy&fl=sv&fe=ci"
+                  src="https://player.vimeo.com/video/1175687632?autoplay=1&title=0&byline=0&portrait=0&badge=0&autopause=0"
                   frameBorder="0"
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                   className="w-full h-full"
