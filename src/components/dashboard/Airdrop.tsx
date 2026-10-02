@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Droplets, RefreshCcw } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 
@@ -70,20 +69,20 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white/5 border border-white/10 rounded-[32px] p-10 backdrop-blur-xl"
-    >
-      <h2 className="text-2xl font-bold mb-8 text-white">Request Airdrop</h2>
-      <div className="flex flex-col gap-6">
+    <div className="bg-white/5 border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 md:p-10 backdrop-blur-md">
+      <h2 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-8 text-white">Request Airdrop</h2>
+      <div className="flex flex-col gap-5 sm:gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1">
             Wallet PublicKey
           </label>
           <input
             type="text"
-            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            className="w-full min-w-0 bg-zinc-950 border border-white/20 text-white text-base px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-inner placeholder:text-white/25"
             placeholder="Address"
             value={formData.publicKey}
             onChange={(e) =>
@@ -97,7 +96,9 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
           </label>
           <input
             type="number"
-            className="bg-zinc-950 border border-white/20 text-white px-5 py-4 rounded-2xl outline-none focus:border-primary transition-all shadow-inner"
+            inputMode="decimal"
+            step="any"
+            className="w-full min-w-0 bg-zinc-950 border border-white/20 text-white text-base px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-inner placeholder:text-white/25"
             value={formData.amount}
             onChange={(e) =>
               setFormData({ ...formData, amount: e.target.value })
@@ -107,7 +108,7 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
         <button
           onClick={handleAirdrop}
           disabled={loading}
-          className="mt-4 bg-primary text-black font-bold px-8 py-4 rounded-2xl hover:scale-[1.02] active:scale-100 disabled:opacity-50 disabled:scale-100 transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(20,241,149,0.2)]"
+          className="mt-2 sm:mt-4 bg-primary text-black font-bold px-8 py-4 rounded-2xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(20,241,149,0.2)]"
         >
           {loading ? (
             <RefreshCcw className="animate-spin" size={20} />
@@ -119,6 +120,6 @@ export function Airdrop({ onNotify, backendUrl }: AirdropProps) {
           )}
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

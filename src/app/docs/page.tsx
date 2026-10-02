@@ -14,7 +14,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const sections = [
   {
@@ -23,15 +23,15 @@ const sections = [
     icon: <Book size={18} />,
     content: (
       <div className="space-y-6">
-        <p className="text-white/60 leading-relaxed text-lg">
+        <p className="text-white/60 leading-relaxed text-base sm:text-lg">
           Welcome to <span className="text-primary font-bold">SOLVAULT</span>,
           the ultimate developer and power-user toolbox for the Solana
           ecosystem. Designed for speed, security, and automation, SolVault
           provides a high-fidelity interface to manage assets, deploy autonomous
           agents, and streamline blockchain operations.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-          <div className="p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-primary/30 transition-all">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8">
+          <div className="p-5 sm:p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-primary/30 transition-all">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
               <Shield size={20} />
             </div>
@@ -41,7 +41,7 @@ const sections = [
               absolute control over your assets.
             </p>
           </div>
-          <div className="p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-primary/30 transition-all">
+          <div className="p-5 sm:p-6 bg-white/5 border border-white/10 rounded-3xl group hover:border-primary/30 transition-all">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
               <Cpu size={20} />
             </div>
@@ -61,21 +61,21 @@ const sections = [
     icon: <Terminal size={18} />,
     content: (
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold text-white">System Requirements</h3>
+        <h3 className="text-xl sm:text-2xl font-bold text-white">System Requirements</h3>
         <p className="text-white/60">
           Ensure you have the following installed on your machine:
         </p>
-        <ul className="list-disc list-inside text-white/40 space-y-2 ml-4">
+        <ul className="list-disc list-inside text-white/40 space-y-2 ml-1 sm:ml-4">
           <li>Node.js 18.x or higher</li>
           <li>Solana CLI tools (for local development)</li>
           <li>Local Solana Validator (running on port 8899)</li>
         </ul>
 
-        <h3 className="text-2xl font-bold text-white mt-8">Quick Start</h3>
-        <div className="p-6 bg-black rounded-2xl border border-white/5 font-mono text-sm space-y-4">
+        <h3 className="text-xl sm:text-2xl font-bold text-white mt-8">Quick Start</h3>
+        <div className="p-4 sm:p-6 bg-black rounded-2xl border border-white/5 font-mono text-xs sm:text-sm space-y-4 overflow-x-auto">
           <div>
             <p className="text-white/30 mb-2"># Clone the repository</p>
-            <p className="text-primary">
+            <p className="text-primary whitespace-nowrap">
               git clone https://github.com/your-repo/solvault.git
             </p>
           </div>
@@ -104,7 +104,7 @@ const sections = [
         <p className="text-white/60">
           SolVault backend exposes a RESTful API for interacting with the Solana
           blockchain. Base URL:{" "}
-          <code className="text-primary">http://localhost:3001</code>
+          <code className="text-primary break-all">http://localhost:3001</code>
         </p>
 
         <div className="space-y-4">
@@ -132,7 +132,7 @@ const sections = [
           ].map((api) => (
             <div
               key={api.path}
-              className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group hover:bg-white/[0.07] transition-all"
+              className="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 group hover:bg-white/[0.07] transition-all"
             >
               <div className="flex items-center gap-4">
                 <span className="text-[10px] font-black px-2 py-1 bg-primary/20 text-primary rounded border border-primary/30 uppercase tracking-widest">
@@ -140,7 +140,7 @@ const sections = [
                 </span>
                 <code className="text-white font-bold">{api.path}</code>
               </div>
-              <span className="text-white/40 text-sm hidden md:block">
+              <span className="text-white/40 text-sm">
                 {api.desc}
               </span>
             </div>
@@ -197,11 +197,32 @@ const sections = [
 export default function DocsPage() {
   const [activeSection, setActiveSection] = useState("intro");
 
+  // Scroll-spy: highlight the section currently in the reading zone
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((e) => e.isIntersecting);
+        if (visible) setActiveSection(visible.target.id);
+      },
+      { rootMargin: "-30% 0px -60% 0px" },
+    );
+    sections.forEach((section) => {
+      const el = document.getElementById(section.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const goTo = (id: string) => {
+    setActiveSection(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans">
+    <div className="min-h-dvh bg-background text-white selection:bg-primary/30 font-sans">
       {/* Navbar - Fixed to top */}
-      <nav className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-xl border-b border-white/5 z-50 px-6 md:px-12 flex items-center justify-between">
-        <div className="flex items-center gap-8">
+      <nav className="fixed top-0 left-0 right-0 h-16 md:h-20 bg-background/80 backdrop-blur-xl border-b border-white/5 z-50 px-4 sm:px-6 md:px-12 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 md:gap-8 min-w-0">
           <Link href="/" className="group flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-black shadow-lg transition-transform group-hover:scale-110">
               <Zap size={20} fill="currentColor" />
@@ -211,15 +232,15 @@ export default function DocsPage() {
             </span>
           </Link>
           <div className="h-6 w-[1px] bg-white/10 hidden md:block" />
-          <div className="flex items-center gap-2 text-white/40 group cursor-default">
+          <div className="hidden min-[400px]:flex items-center gap-2 text-white/40 group cursor-default">
             <Book size={16} />
-            <span className="text-xs font-bold uppercase tracking-[0.2em]">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
               Documentation
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 shrink-0">
           <Link
             href="/dashboard"
             className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest hidden md:block"
@@ -228,14 +249,34 @@ export default function DocsPage() {
           </Link>
           <Link
             href="/dashboard"
-            className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black hover:bg-white/10 transition-all uppercase tracking-widest"
+            className="px-4 sm:px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black hover:bg-white/10 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
           >
             Launch App
           </Link>
         </div>
       </nav>
 
-      <div className="max-w-[1400px] mx-auto pt-20 flex min-h-[calc(100vh-80px)]">
+            {/* Mobile section nav */}
+      <div className="lg:hidden fixed top-16 md:top-20 inset-x-0 z-40 bg-background/80 backdrop-blur-xl border-b border-white/5">
+        <div className="flex gap-2 px-4 sm:px-6 py-3 overflow-x-auto scrollbar-hide">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => goTo(section.id)}
+              className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-colors ${
+                activeSection === section.id
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "text-white/40 border border-white/5 bg-white/[0.02]"
+              }`}
+            >
+              {section.icon}
+              {section.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto pt-[124px] md:pt-[140px] lg:pt-20 flex min-h-dvh">
         {/* Sidebar */}
         <aside className="w-[300px] border-r border-white/5 hidden lg:block sticky top-20 h-[calc(100vh-80px)] overflow-y-auto p-8">
           <div className="space-y-1">
@@ -245,12 +286,7 @@ export default function DocsPage() {
             {sections.map((section) => (
               <button
                 key={section.id}
-                onClick={() => {
-                  setActiveSection(section.id);
-                  document
-                    .getElementById(section.id)
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
+                onClick={() => goTo(section.id)}
                 className={`
                   w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-left
                   ${
@@ -287,19 +323,19 @@ export default function DocsPage() {
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 p-6 md:p-12 lg:p-20 overflow-y-auto max-w-4xl mx-auto lg:mx-0">
-          <div className="space-y-32 pb-40">
+        <main className="flex-1 min-w-0 px-4 py-8 sm:p-6 md:p-12 lg:p-20 max-w-4xl mx-auto lg:mx-0">
+          <div className="space-y-20 md:space-y-32 pb-24 md:pb-40">
             {sections.map((section) => (
               <section
                 key={section.id}
                 id={section.id}
-                className="scroll-mt-32"
+                className="scroll-mt-36 lg:scroll-mt-28"
               >
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-primary">
+                <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-primary">
                     {section.icon}
                   </div>
-                  <h2 className="text-5xl font-black tracking-tighter uppercase">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase break-words min-w-0">
                     {section.title}
                   </h2>
                 </div>

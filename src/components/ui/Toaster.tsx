@@ -20,16 +20,25 @@ export function Toaster() {
   };
 
   return (
-    <div className="fixed top-8 right-8 z-1000 flex flex-col gap-4 w-[380px] pointer-events-none">
+    <div className="fixed top-3 inset-x-3 sm:top-8 sm:right-8 sm:left-auto sm:w-[380px] z-1000 flex flex-col gap-3 sm:gap-4 pointer-events-none">
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (
           <motion.div
             key={toast.id}
             layout
-            initial={{ opacity: 0, x: 50, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-            className="pointer-events-auto"
+            initial={{ opacity: 0, y: -16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.6}
+            onDragEnd={(_, info) => {
+              if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 500) {
+                toastStore.remove(toast.id);
+              }
+            }}
+            className="pointer-events-auto touch-pan-y cursor-grab active:cursor-grabbing"
           >
             <div className="relative group bg-black/95 backdrop-blur-2xl border border-white/10 rounded-[28px] overflow-hidden shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]">
               {/* Highlight Gradient */}
@@ -37,7 +46,7 @@ export function Toaster() {
                 ${toast.type === "success" ? "bg-primary" : toast.type === "error" ? "bg-red-500" : "bg-blue-500"}
               `} />
               
-              <div className="p-5 flex flex-col gap-3">
+              <div className="p-4 sm:p-5 flex flex-col gap-3">
                 <div className="flex items-start gap-4">
                   {/* Icon Section */}
                   <div className={`mt-0.5 p-2 rounded-xl border
@@ -52,8 +61,8 @@ export function Toaster() {
                     {toast.type === "loading" && <RefreshCcw size={18} className="animate-spin" />}
                   </div>
 
-                  <div className="grow">
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white mb-1">
+                  <div className="grow min-w-0">
+                    <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider sm:tracking-widest text-white mb-1 break-words">
                       {toast.title}
                     </h4>
                     {toast.description && (
@@ -65,7 +74,8 @@ export function Toaster() {
 
                   <button 
                     onClick={() => toastStore.remove(toast.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/5 rounded-lg text-white/50"
+                    aria-label="Dismiss notification"
+                    className="shrink-0 md:opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/5 rounded-lg text-white/50"
                   >
                     <X size={14} />
                   </button>

@@ -31,10 +31,49 @@
   }
 }
 
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/30;
     font-family: var(--font-inter), system-ui, sans-serif;
+    overflow-x: clip;
+    overscroll-behavior-y: none;
+  }
+
+  button,
+  a,
+  input,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Hide number input spinners — they eat space on small screens */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
@@ -45,16 +84,22 @@
 
   /* Premium Wallet Adapter Styling Overrides */
   .wallet-adapter-button {
-    @apply h-12 px-8 !rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300;
+    @apply h-10 px-4 sm:h-12 sm:px-8 !rounded-[24px] text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-[0.2em] whitespace-nowrap transition-all duration-300;
     background: var(--primary) !important;
     color: #000 !important;
     box-shadow: 0 0 20px rgba(20, 241, 149, 0.2);
   }
 
-  .wallet-adapter-button:hover {
-    @apply scale-[1.02] -translate-y-0.5;
-    background: #fff !important;
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+  @media (hover: hover) and (pointer: fine) {
+    .wallet-adapter-button:hover {
+      @apply scale-[1.02] -translate-y-0.5;
+      background: #fff !important;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  .wallet-adapter-button-start-icon {
+    @apply !mr-2 sm:!mr-3;
   }
 
   .wallet-adapter-button:not([disabled]):active {
@@ -81,8 +126,14 @@
 
   /* Modal Enhancements */
   .wallet-adapter-modal-wrapper {
-    @apply !bg-[#050505] !border !border-white/5 !rounded-[40px] !shadow-[0_0_100px_rgba(0,0,0,0.8)];
-    padding: 2.5rem !important;
+    @apply !bg-[#050505] !border !border-white/5 !rounded-[28px] sm:!rounded-[40px] !shadow-[0_0_100px_rgba(0,0,0,0.8)];
+    padding: 1.5rem !important;
+  }
+
+  @media (min-width: 640px) {
+    .wallet-adapter-modal-wrapper {
+      padding: 2.5rem !important;
+    }
   }
 
   .wallet-adapter-modal-button-close {
@@ -90,7 +141,7 @@
   }
 
   .wallet-adapter-modal-title {
-    @apply !text-white !font-black !uppercase !tracking-tighter !text-3xl !mb-8 !border-b !border-white/5 !pb-4;
+    @apply !text-white !font-black !uppercase !tracking-tighter !text-2xl sm:!text-3xl !mb-6 sm:!mb-8 !border-b !border-white/5 !pb-4;
   }
 
   .wallet-adapter-modal-list {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -25,6 +25,19 @@ import { VideoBackground } from "@/components/ui/VideoBackground";
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [showDemo, setShowDemo] = useState(false);
+
+  // Lock page scroll and allow Escape to close while the demo is open
+  useEffect(() => {
+    if (!showDemo) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setShowDemo(false);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [showDemo]);
 
   const steps = [
     {
@@ -68,9 +81,9 @@ export default function LandingPage() {
       icon: <Cpu />,
       content: (
         <div className="relative h-full flex flex-col justify-center">
-          <div className="bg-[#0a0a0b] p-8 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-[#0a0a0b] p-6 sm:p-8 rounded-[28px] sm:rounded-[40px] text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-3xl" />
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mt-8 mb-14">
               <div className="relative">
                 <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center border border-white/20 text-primary uppercase font-black text-xs">
                   <span className="animate-pulse flex items-center gap-1">
@@ -113,7 +126,7 @@ export default function LandingPage() {
         "Auto-scale your operations as your project grows. Full visibility into every transaction and agent action.",
       icon: <BarChart3 />,
       content: (
-        <div className="p-8 bg-white/3 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-md w-full relative z-10">
+        <div className="p-6 sm:p-8 bg-white/3 border border-white/5 rounded-[28px] sm:rounded-[40px] shadow-2xl backdrop-blur-md w-full relative z-10">
           <div className="flex items-center gap-4 mb-8 text-left">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-black">
               <Globe size={24} />
@@ -142,7 +155,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div className="pt-6 border-t border-white/5 flex justify-between items-center text-[10px]">
+          <div className="pt-6 border-t border-white/5 flex justify-between items-center gap-3 text-[10px]">
             <span className="text-white/30 font-black uppercase tracking-widest">
               Active Scaling Nodes
             </span>
@@ -156,14 +169,29 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans overflow-x-hidden">
+    <div className="min-h-dvh bg-background text-white selection:bg-primary/30 font-sans overflow-x-clip">
       {/* Navbar */}
-      <nav className="flex justify-between items-center px-6 md:px-12 py-8 max-w-[1400px] mx-auto sticky top-0 bg-background/80 backdrop-blur-md z-50">
-        <div className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-11 h-11 bg-primary rounded-[14px] flex items-center justify-center text-black shadow-[0_0_20px_rgba(20,241,149,0.3)] transition-all group-hover:scale-110">
+      <nav className="flex justify-between items-center px-5 md:px-12 py-4 md:py-8 max-w-[1400px] mx-auto sticky top-0 bg-background/80 backdrop-blur-md z-50">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 md:w-11 md:h-11 bg-primary rounded-[14px] flex items-center justify-center text-black shadow-[0_0_20px_rgba(20,241,149,0.3)] transition-all group-hover:scale-110">
             <Zap size={24} fill="currentColor" />
           </div>
-          <span className="text-xl font-black tracking-tighter">SOLVAULT</span>
+          <span className="text-lg md:text-xl font-black tracking-tighter">SOLVAULT</span>
+        </Link>
+
+        <div className="flex md:hidden items-center gap-2">
+          <Link
+            href="/docs"
+            className="px-3 py-2 text-xs font-bold text-white/50 hover:text-white transition-colors uppercase tracking-wider"
+          >
+            Docs
+          </Link>
+          <Link
+            href="/dashboard"
+            className="px-4 py-2.5 bg-primary text-black rounded-xl text-xs font-black active:scale-95 transition-transform uppercase tracking-wider"
+          >
+            Launch
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center gap-10">
@@ -189,7 +217,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative px-6 py-20 md:py-32 flex flex-col items-center text-center overflow-hidden">
+      <section className="relative px-5 sm:px-6 py-16 sm:py-20 md:py-32 flex flex-col items-center text-center overflow-hidden">
         {/* Background Video */}
         <VideoBackground
           src="/video.mp4"
@@ -206,7 +234,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-[900px] relative"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-6 sm:mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -214,23 +242,23 @@ export default function LandingPage() {
             v1.0 Beta is live
           </div>
 
-          <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-black leading-[0.9] tracking-[-0.06em] mb-8 uppercase">
+          <h1 className="text-[clamp(3rem,15vw,8rem)] font-black leading-[0.9] tracking-[-0.06em] mb-6 sm:mb-8 uppercase">
             Automate <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-white to-primary/40 bg-[length:200%_auto] animate-shimmer">
               Solana
             </span>
           </h1>
 
-          <p className="text-lg md:text-2xl text-white/40 font-medium max-w-[600px] mx-auto leading-relaxed mb-12 tracking-tight">
+          <p className="text-base sm:text-lg md:text-2xl text-white/40 font-medium max-w-[600px] mx-auto leading-relaxed mb-10 sm:mb-12 tracking-tight text-pretty">
             The high-fidelity vault system for power users.{" "}
             <br className="hidden md:block" />
             Secure assets, run agents, and scale operations.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto">
             <Link
               href="/dashboard"
-              className="group px-12 py-5 bg-primary text-black font-black text-md rounded-[24px] flex items-center gap-3 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(20,241,149,0.3)] transition-all active:scale-95"
+              className="group px-10 sm:px-12 py-4 sm:py-5 bg-primary text-black font-black text-md rounded-[20px] sm:rounded-[24px] flex items-center justify-center gap-3 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(20,241,149,0.3)] transition-all active:scale-95"
             >
               Get Started
               <ArrowRight
@@ -240,7 +268,7 @@ export default function LandingPage() {
             </Link>
             <button
               onClick={() => setShowDemo(true)}
-              className="px-12 py-5 bg-white/5 border border-white/10 text-white font-black text-md rounded-[24px] hover:bg-white/10 transition-all flex items-center gap-2 group"
+              className="px-10 sm:px-12 py-4 sm:py-5 bg-white/5 border border-white/10 text-white font-black text-md rounded-[20px] sm:rounded-[24px] hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-2 group"
             >
               <Play
                 size={18}
@@ -260,31 +288,31 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid Section (Bento Style) */}
-      <section className="px-6 py-24 md:py-40 max-w-[1300px] mx-auto">
-        <div className="flex flex-col items-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-6 text-center">
+      <section className="px-4 sm:px-6 py-16 sm:py-24 md:py-40 max-w-[1300px] mx-auto">
+        <div className="flex flex-col items-center mb-10 sm:mb-20">
+          <h2 className="text-[2rem] leading-none sm:text-4xl md:text-6xl font-black tracking-tighter uppercase mb-5 sm:mb-6 text-center">
             One platform. <br className="md:hidden" />
             <span className="text-primary">Infinite Power.</span>
           </h2>
-          <p className="text-white/40 text-lg md:text-xl font-medium max-w-2xl text-center leading-relaxed">
+          <p className="text-white/40 text-base sm:text-lg md:text-xl font-medium max-w-2xl text-center leading-relaxed text-pretty">
             A comprehensive suite of tools built for the next generation of
             Solana power users and autonomous agent teams.
           </p>
         </div>
 
-        <div className="grid grid-cols-12 gap-4 auto-rows-[240px] md:auto-rows-[280px]">
+        <div className="grid grid-cols-12 gap-3 sm:gap-4 auto-rows-[minmax(220px,auto)] md:auto-rows-[minmax(280px,auto)]">
           {/* Main Card: Solana Core */}
-          <div className="col-span-12 md:col-span-8 bg-white/5 border border-white/10 rounded-[40px] p-8 md:p-12 relative overflow-hidden group hover:bg-white/[0.07] transition-all">
+          <div className="col-span-12 md:col-span-8 bg-white/5 border border-white/10 rounded-[28px] sm:rounded-[40px] p-6 sm:p-8 md:p-12 relative overflow-hidden group hover:bg-white/[0.07] transition-all">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-[100px] group-hover:bg-primary/20 transition-all" />
             <div className="flex flex-col h-full justify-between relative z-10">
               <div className="space-y-4 max-w-md">
                 <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mb-6">
                   <Database size={24} />
                 </div>
-                <h3 className="text-3xl font-black uppercase tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
                   Solana Core Engine
                 </h3>
-                <p className="text-white/50 text-base leading-relaxed">
+                <p className="text-white/50 text-sm sm:text-base leading-relaxed">
                   High-fidelity integration with System Program. Handle native
                   SOL transfers, account initialization, and cluster-wide state
                   management with ease.
@@ -324,7 +352,7 @@ export default function LandingPage() {
           </div>
 
           {/* Card 2: Identity & Security */}
-          <div className="col-span-12 md:col-span-4 bg-[#0a0a0b] border border-white/10 rounded-[40px] p-8 relative overflow-hidden group">
+          <div className="col-span-12 md:col-span-4 bg-[#0a0a0b] border border-white/10 rounded-[28px] sm:rounded-[40px] p-6 sm:p-8 relative overflow-hidden group">
             <VideoBackground
               src="/video3.mp4"
               overlayOpacity={0.7}
@@ -345,7 +373,7 @@ export default function LandingPage() {
           </div>
 
           {/* Card 3: Token Forge */}
-          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[40px] p-8 flex flex-col group hover:border-primary/30 transition-all relative overflow-hidden">
+          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[28px] sm:rounded-[40px] p-6 sm:p-8 flex flex-col group hover:border-primary/30 transition-all relative overflow-hidden">
             <VideoBackground
               src="/video4.mp4"
               overlayOpacity={0.75}
@@ -373,7 +401,7 @@ export default function LandingPage() {
           </div>
 
           {/* Card 4: Realtime Engine */}
-          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[40px] p-8 flex flex-col group hover:border-primary/30 transition-all">
+          <div className="col-span-12 md:col-span-4 bg-white/5 border border-white/10 rounded-[28px] sm:rounded-[40px] p-6 sm:p-8 flex flex-col group hover:border-primary/30 transition-all">
             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/50 mb-6 group-hover:text-primary transition-colors">
               <Activity size={24} />
             </div>
@@ -393,7 +421,7 @@ export default function LandingPage() {
           </div>
 
           {/* Card 5: API Section */}
-          <div className="col-span-12 md:col-span-4 bg-black border border-white/10 rounded-[40px] p-8 flex flex-col group relative overflow-hidden">
+          <div className="col-span-12 md:col-span-4 bg-black border border-white/10 rounded-[28px] sm:rounded-[40px] p-6 sm:p-8 flex flex-col group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl" />
             <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:text-primary transition-colors">
               <Terminal size={24} />
@@ -419,18 +447,18 @@ export default function LandingPage() {
       </section>
 
       {/* How it Works Section */}
-      <section className="px-6 py-24 md:py-48 max-w-[1300px] mx-auto">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+      <section className="px-4 sm:px-6 py-16 sm:py-24 md:py-48 max-w-[1300px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-10 sm:gap-16 lg:gap-24 items-center">
           {/* Left Column: Navigation and Narrative */}
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="mb-16">
-              <h2 className="text-6xl md:text-8xl font-black text-white leading-[0.85] tracking-tighter mb-8 uppercase">
+          <div className="flex-1 w-full flex flex-col justify-center">
+            <div className="mb-10 sm:mb-16">
+              <h2 className="text-[clamp(2.75rem,14vw,6rem)] md:text-8xl font-black text-white leading-[0.85] tracking-tighter mb-6 sm:mb-8 uppercase">
                 Simple. <br />
                 <span className="text-primary italic">Powerful.</span>
                 <br />
                 Proven.
               </h2>
-              <p className="text-white/40 text-lg md:text-xl font-medium max-w-md leading-relaxed tracking-tight group">
+              <p className="text-white/40 text-base sm:text-lg md:text-xl font-medium max-w-md leading-relaxed tracking-tight group">
                 Scale from <span className="text-white">zero to hero</span> with
                 our streamlined pipeline. Designed for the next generation of{" "}
                 <span className="text-primary underline decoration-2 underline-offset-4">
@@ -439,13 +467,13 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 sm:gap-3">
               {steps.map((step, index) => (
                 <button
                   key={step.id}
                   onClick={() => setActiveStep(index)}
                   className={`
-                    group relative flex items-center gap-6 p-6 rounded-[32px] transition-all duration-500 text-left overflow-hidden
+                    group relative flex items-center gap-4 sm:gap-6 p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] transition-all duration-500 text-left overflow-hidden active:scale-[0.99]
                     ${
                       activeStep === index
                         ? "bg-white/5 border border-white/10 ring-1 ring-white/10"
@@ -463,7 +491,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h4
-                      className={`text-xl font-black tracking-tight uppercase transition-colors ${activeStep === index ? "text-white" : "text-white/30"}`}
+                      className={`text-base sm:text-xl font-black tracking-tight uppercase transition-colors ${activeStep === index ? "text-white" : "text-white/30"}`}
                     >
                       {step.title}
                     </h4>
@@ -471,6 +499,7 @@ export default function LandingPage() {
                   {activeStep === index && (
                     <motion.div
                       layoutId="step-glow"
+                      transition={{ type: "spring", stiffness: 380, damping: 34 }}
                       className="absolute inset-0 bg-primary/5 -z-10"
                     />
                   )}
@@ -479,7 +508,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex-[1.4] w-full aspect-square md:aspect-auto lg:min-h-[700px] relative bg-white/2 border border-white/5 rounded-[64px] flex items-center justify-center overflow-hidden shadow-2xl backdrop-blur-3xl">
+          <div className="flex-[1.4] w-full min-h-[560px] sm:min-h-[620px] lg:min-h-[700px] relative bg-white/2 border border-white/5 rounded-[32px] sm:rounded-[48px] lg:rounded-[64px] flex items-center justify-center overflow-hidden shadow-2xl">
             {/* Background Video for Right Panel */}
             <VideoBackground
               src="/video5.mp4"
@@ -494,20 +523,20 @@ export default function LandingPage() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep}
-                initial={{ opacity: 0, scale: 0.9, y: 30, rotateY: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0, rotateY: 0 }}
-                exit={{ opacity: 0, scale: 1.1, y: -30, rotateY: -20 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-[500px] p-8 md:p-12 relative z-10"
+                initial={{ opacity: 0, scale: 0.96, y: 24 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 1.02, y: -16 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-[500px] p-5 sm:p-8 md:p-12 relative z-10"
               >
-                <div className="mb-12 text-center lg:text-left">
+                <div className="mb-8 sm:mb-12 text-center lg:text-left">
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-6">
                     {steps[activeStep].id}
                   </div>
-                  <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-6 leading-none">
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-4 sm:mb-6 leading-none text-balance">
                     {steps[activeStep].title}
                   </h3>
-                  <p className="text-white/40 text-base md:text-lg font-medium leading-relaxed">
+                  <p className="text-white/40 text-sm sm:text-base md:text-lg font-medium leading-relaxed">
                     {steps[activeStep].description}
                   </p>
                 </div>
@@ -525,8 +554,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-20 mt-20 border-t border-white/5 bg-black/20">
-        <div className="max-w-[1300px] mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+      <footer className="px-6 py-12 sm:py-20 mt-10 sm:mt-20 border-t border-white/5 bg-black/20">
+        <div className="max-w-[1300px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12 text-center">
           <div className="flex items-center gap-3 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-crosshair">
             <Zap size={24} fill="currentColor" />
             <span className="font-black text-2xl tracking-tighter">
@@ -562,7 +591,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 flex items-center justify-center p-6 md:p-12"
+            className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-12"
           >
             <div
               className="absolute inset-0 bg-background/90 backdrop-blur-xl"
@@ -574,11 +603,12 @@ export default function LandingPage() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-5xl aspect-video bg-white/5 border border-white/10 rounded-[40px] overflow-hidden shadow-2xl relative group"
+              className="w-full max-w-5xl aspect-video bg-white/5 border border-white/10 rounded-[20px] sm:rounded-[40px] overflow-hidden shadow-2xl relative group"
             >
               <button
                 onClick={() => setShowDemo(false)}
-                className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white z-20 backdrop-blur-md transition-all active:scale-95"
+                aria-label="Close demo"
+                className="absolute top-3 right-3 sm:top-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white z-20 backdrop-blur-md transition-all active:scale-95"
               >
                 <X size={24} />
               </button>

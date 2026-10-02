@@ -117,22 +117,26 @@ export function Tools({ onNotify, backendUrl }: ToolsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {tools.map((tool) => (
-        <motion.div
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
+      {tools.map((tool, index) => (
+        <motion.button
+          type="button"
           key={tool.id}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
           whileHover={{ y: -5 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={loadingAction !== null}
           onClick={() => performAction(tool.id, tool.label)}
-          className="group relative bg-white/[0.03] border border-white/10 rounded-[32px] p-8 cursor-pointer transition-all hover:bg-white/[0.05] hover:border-primary/30 overflow-hidden"
+          className="group relative text-left bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 cursor-pointer transition-colors hover:bg-white/[0.05] hover:border-primary/30 overflow-hidden disabled:cursor-wait"
         >
           {/* Subtle Hover Glow */}
           <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-colors pointer-events-none" />
           
-          <div className="flex flex-col gap-6 relative z-10">
+          <div className="flex flex-col gap-4 sm:gap-6 relative z-10">
             <div className="flex items-center justify-between">
-              <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all duration-500 shadow-inner">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all duration-500 shadow-inner">
                 {tool.icon}
               </div>
               <div className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-white/20 group-hover:text-primary group-hover:border-primary/20 transition-all">
@@ -145,7 +149,7 @@ export function Tools({ onNotify, backendUrl }: ToolsProps) {
             </div>
 
             <div>
-              <h4 className="text-xl font-black text-white uppercase tracking-tight mb-2">
+              <h4 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight mb-1 sm:mb-2">
                 {tool.label}
               </h4>
               <p className="text-xs text-white/30 font-medium uppercase tracking-[0.2em]">
@@ -162,7 +166,7 @@ export function Tools({ onNotify, backendUrl }: ToolsProps) {
                />
             </div>
           </div>
-        </motion.div>
+        </motion.button>
       ))}
     </div>
   );
