@@ -4,36 +4,27 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import {
-  UnsafeBurnerWalletAdapter,
-  PhantomWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { clusterApiUrl } from "@solana/web3.js";
 import { MotionConfig } from "framer-motion";
+import { SettingsProvider, useSettings } from "@/context/SettingsContext";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-export const WalletContextProvider: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  // Set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
-
-  // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+const SolanaProviders: FC<{ children: ReactNode }> = ({ children }) => {
+  // Endpoint follows the network / custom RPC chosen in Settings
+  const { endpoint } = useSettings();
 
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
-  
+
   const onError = React.useCallback((error: any) => {
-    // Suppress common noisy errors like "Plugin Closed" or "User Rejected" 
+    // Suppress common noisy errors like "Plugin Closed" or "User Rejected"
     // to prevent white-screen crashes or intrusive console spam.
     console.warn("Wallet Connection Error:", error.name, error.message);
   }, []);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={endpoint} config={{ commitment: "confirmed" }}>
       <WalletProvider wallets={wallets} autoConnect onError={onError}>
         <WalletModalProvider>
           <MotionConfig reducedMotion="user">{children}</MotionConfig>
@@ -42,3 +33,11 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
     </ConnectionProvider>
   );
 };
+
+export const WalletContextProvider: FC<{ children: ReactNode }> = ({
+  children,
+}) => (
+  <SettingsProvider>
+    <SolanaProviders>{children}</SolanaProviders>
+  </SettingsProvider>
+);

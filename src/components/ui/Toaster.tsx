@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toastStore, ToastMessage } from "@/hooks/useToast";
+import { useSettings } from "@/context/SettingsContext";
 import { CheckCircle2, AlertCircle, RefreshCcw, Copy, ExternalLink, X, Info } from "lucide-react";
 
 export function Toaster() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const { txUrl } = useSettings();
 
   useEffect(() => {
     const unsubscribe = toastStore.subscribe((t) => {
@@ -100,7 +102,7 @@ export function Toaster() {
                       {toast.signature}
                     </code>
                     <a 
-                      href={`https://explorer.solana.com/tx/${toast.signature}?cluster=devnet`}
+                      href={txUrl(toast.signature)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 py-2 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-wider hover:brightness-110 active:scale-[0.98] transition-all"

@@ -18,13 +18,72 @@ import {
   Boxes,
   Play,
   X,
+  Send,
+  Droplets,
+  Coins,
+  Layers,
+  History,
+  Settings2,
+  Code2,
+  Rocket,
+  GraduationCap,
+  Check,
+  ChevronDown,
 } from "lucide-react";
+import { SiteNav } from "@/components/site/SiteNav";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import Link from "next/link";
 import { VideoBackground } from "@/components/ui/VideoBackground";
+
+const stats = [
+  { value: "~400ms", label: "Block time" },
+  { value: "<$0.001", label: "Avg. tx fee" },
+  { value: "6", label: "Built-in tools" },
+  { value: "0", label: "CLI commands" },
+];
+
+const toolkit = [
+  { href: "/dashboard/transfer", icon: <Send size={22} />, title: "Transfer SOL", desc: "Review the exact fee, confirm, and get an explorer-verified receipt." },
+  { href: "/dashboard/airdrop", icon: <Droplets size={22} />, title: "Devnet Faucet", desc: "Claim free test SOL in one click. Clearly devnet-only." },
+  { href: "/dashboard/mint", icon: <Coins size={22} />, title: "Token Minting", desc: "Name, symbol, decimals, supply — mint + ATA + supply in one transaction." },
+  { href: "/dashboard/tokens", icon: <Layers size={22} />, title: "Account Explorer", desc: "See every token account you own and derive any ATA from its seeds." },
+  { href: "/dashboard/history", icon: <History size={22} />, title: "Tx History", desc: "Every action is logged and linked to Solana Explorer or Solscan." },
+  { href: "/dashboard/settings", icon: <Settings2 size={22} />, title: "Network Control", desc: "Switch Devnet, Testnet or Mainnet, and bring your own RPC." },
+];
+
+const personas = [
+  {
+    icon: <Code2 size={22} />,
+    title: "Protocol devs",
+    desc: "Spin up test mints and fund wallets while you iterate on programs.",
+    points: ["Instant test SOL", "Custom RPC / localnet", "Raw tx signatures"],
+  },
+  {
+    icon: <Rocket size={22} />,
+    title: "Hackathon teams",
+    desc: "Skip the setup. Demo token flows to judges in minutes, not hours.",
+    points: ["Mint in one tx", "Shareable explorer links", "Mobile friendly"],
+  },
+  {
+    icon: <GraduationCap size={22} />,
+    title: "Learners",
+    desc: "See what actually happens on-chain — instruction by instruction.",
+    points: ["ATA seed visualizer", "Plain-English errors", "Step-by-step docs"],
+  },
+];
+
+const faqs = [
+  { q: "Is SolVault custodial?", a: "No. Every transaction is built in your browser and signed by your own wallet. SolVault never sees or stores private keys." },
+  { q: "Does it work on Mainnet?", a: "Yes — switch networks in Settings. Devnet is the default and recommended for testing. The faucet is disabled on Mainnet because test SOL doesn't exist there." },
+  { q: "Which wallets are supported?", a: "Phantom out of the box, plus any wallet that implements the Solana Wallet Standard (Solflare, Backpack and others are detected automatically)." },
+  { q: "What does it cost?", a: "The sandbox is free. You only pay Solana network fees, which are fractions of a cent. See Pricing for upcoming Pro features." },
+  { q: "Where is my history stored?", a: "Locally in your browser. Every entry links to a public explorer, so the on-chain record is always the source of truth." },
+];
 
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [showDemo, setShowDemo] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Lock page scroll and allow Escape to close while the demo is open
   useEffect(() => {
@@ -170,51 +229,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-dvh bg-background text-white selection:bg-primary/30 font-sans overflow-x-clip">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center px-5 md:px-12 py-4 md:py-8 max-w-[1400px] mx-auto sticky top-0 bg-background/80 backdrop-blur-md z-50">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 md:w-11 md:h-11 bg-primary rounded-[14px] flex items-center justify-center text-black shadow-[0_0_20px_rgba(20,241,149,0.3)] transition-all group-hover:scale-110">
-            <Zap size={24} fill="currentColor" />
-          </div>
-          <span className="text-lg md:text-xl font-black tracking-tighter">SOLVAULT</span>
-        </Link>
-
-        <div className="flex md:hidden items-center gap-2">
-          <Link
-            href="/docs"
-            className="px-3 py-2 text-xs font-bold text-white/50 hover:text-white transition-colors uppercase tracking-wider"
-          >
-            Docs
-          </Link>
-          <Link
-            href="/dashboard"
-            className="px-4 py-2.5 bg-primary text-black rounded-xl text-xs font-black active:scale-95 transition-transform uppercase tracking-wider"
-          >
-            Launch
-          </Link>
-        </div>
-
-        <div className="hidden md:flex items-center gap-10">
-          <Link
-            href="/dashboard"
-            className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-wide uppercase"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/docs"
-            className="text-sm font-bold text-white/50 hover:text-white transition-colors tracking-wide uppercase"
-          >
-            Docs
-          </Link>
-          <Link
-            href="/dashboard"
-            className="px-8 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-black hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest"
-          >
-            Launch App
-          </Link>
-        </div>
-      </nav>
+      <SiteNav />
 
       {/* Hero Section */}
       <section className="relative px-5 sm:px-6 py-16 sm:py-20 md:py-32 flex flex-col items-center text-center overflow-hidden">
@@ -284,6 +299,18 @@ export default function LandingPage() {
           <Zap className="absolute top-[20%] left-[15%] text-primary size-24 rotate-12 blur-sm" />
           <Shield className="absolute bottom-[20%] right-[10%] text-white size-32 -rotate-12 blur-[1px]" />
           <Cpu className="absolute top-[40%] right-[20%] text-primary/40 size-20 rotate-45 blur-md" />
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="px-4 sm:px-6 max-w-[1300px] mx-auto -mt-4 sm:mt-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 rounded-[24px] sm:rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden divide-x divide-y md:divide-y-0 divide-white/5">
+          {stats.map((st) => (
+            <div key={st.label} className="p-5 sm:p-8 text-center">
+              <p className="text-2xl sm:text-4xl font-black tracking-tighter text-white mb-1">{st.value}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/30">{st.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -446,6 +473,39 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Toolkit */}
+      <section className="px-4 sm:px-6 py-8 sm:py-16 max-w-[1300px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-12">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-3">What&apos;s inside</p>
+            <h2 className="text-[2rem] leading-none sm:text-5xl font-black tracking-tighter uppercase">Six tools. One tab.</h2>
+          </div>
+          <Link href="/dashboard" className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2 hover:gap-3 transition-all">
+            Open the dashboard <ArrowRight size={16} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {toolkit.map((t) => (
+            <Link
+              key={t.title}
+              href={t.href}
+              className="group flex gap-4 sm:gap-5 p-5 sm:p-7 bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[28px] hover:bg-white/[0.06] hover:border-primary/30 hover:-translate-y-1 active:scale-[0.99] transition-all"
+            >
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-white/5 border border-white/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                {t.icon}
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-black uppercase tracking-tight text-white mb-1 flex items-center gap-2">
+                  {t.title}
+                  <ArrowRight size={14} className="text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                </h3>
+                <p className="text-sm text-white/40 leading-relaxed">{t.desc}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* How it Works Section */}
       <section className="px-4 sm:px-6 py-16 sm:py-24 md:py-48 max-w-[1300px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-10 sm:gap-16 lg:gap-24 items-center">
@@ -553,36 +613,92 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="px-6 py-12 sm:py-20 mt-10 sm:mt-20 border-t border-white/5 bg-black/20">
-        <div className="max-w-[1300px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12 text-center">
-          <div className="flex items-center gap-3 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-crosshair">
-            <Zap size={24} fill="currentColor" />
-            <span className="font-black text-2xl tracking-tighter">
-              SOLVAULT
-            </span>
-          </div>
+      {/* Who it's for */}
+      <section className="px-4 sm:px-6 py-16 sm:py-24 max-w-[1300px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
+          <h2 className="text-[2rem] leading-none sm:text-5xl font-black tracking-tighter uppercase">
+            Built for <span className="text-primary">builders.</span>
+          </h2>
+          <p className="text-white/40 text-base sm:text-lg max-w-md leading-relaxed">
+            Whether you&apos;re shipping a protocol or learning what an ATA is, SolVault removes the busywork.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+          {personas.map((p) => (
+            <div key={p.title} className="bg-white/[0.03] border border-white/10 rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 hover:border-primary/30 transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">{p.icon}</div>
+              <h3 className="text-xl font-black uppercase tracking-tight mb-3">{p.title}</h3>
+              <p className="text-white/40 text-sm leading-relaxed mb-5">{p.desc}</p>
+              <ul className="flex flex-col gap-2">
+                {p.points.map((pt) => (
+                  <li key={pt} className="flex items-center gap-2 text-sm text-white/60">
+                    <Check size={14} className="text-primary shrink-0" /> {pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-            {/* <a href="#" className="hover:text-primary transition-colors">
-              Twitter
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
-              Discord
-            </a> */}
-            <a
-              href="https://github.com/KartikeyNamdev/solana-staking-escrow-vault"
-              className="hover:text-primary text-green-600 transition-colors"
-            >
-              GitHub
-            </a>
-          </div>
+      {/* FAQ */}
+      <section className="px-4 sm:px-6 py-16 sm:py-24 max-w-[900px] mx-auto">
+        <h2 className="text-[2rem] leading-none sm:text-5xl font-black tracking-tighter uppercase text-center mb-10 sm:mb-14">
+          Questions, <span className="text-primary">answered.</span>
+        </h2>
+        <div className="flex flex-col gap-2 sm:gap-3">
+          {faqs.map((f, i) => (
+            <div key={f.q} className="bg-white/[0.03] border border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden">
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+                className="w-full flex items-center justify-between gap-4 text-left px-5 sm:px-7 py-5"
+              >
+                <span className="font-bold text-white text-sm sm:text-base">{f.q}</span>
+                <ChevronDown size={18} className={`shrink-0 text-white/40 transition-transform duration-300 ${openFaq === i ? "rotate-180 text-primary" : ""}`} />
+              </button>
+              <AnimatePresence initial={false}>
+                {openFaq === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <p className="px-5 sm:px-7 pb-5 text-sm text-white/50 leading-relaxed">{f.a}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="text-[10px] font-bold text-white/10 uppercase tracking-widest">
-            © 2026 SolVault Labs / Decentralized Excellence
+      {/* Final CTA */}
+      <section className="px-4 sm:px-6 py-10 max-w-[1300px] mx-auto">
+        <div className="relative overflow-hidden rounded-[32px] sm:rounded-[48px] border border-primary/20 bg-linear-to-br from-primary/20 via-primary/5 to-transparent px-6 py-14 sm:p-20 text-center">
+          <VideoBackground src="/video3.mp4" overlayOpacity={0.75} className="opacity-50" />
+          <div className="relative z-10">
+            <h2 className="text-[2rem] leading-none sm:text-6xl font-black tracking-tighter uppercase mb-5">
+              Your first token is <br className="hidden sm:block" />
+              <span className="text-primary">60 seconds away.</span>
+            </h2>
+            <p className="text-white/50 text-base sm:text-lg max-w-xl mx-auto mb-8 sm:mb-10">
+              Connect a wallet, grab free devnet SOL and mint an SPL token — no CLI, no config files.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-sm sm:max-w-none mx-auto">
+              <Link href="/dashboard" className="px-10 py-4 bg-primary text-black font-black rounded-[20px] flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-95 transition-all">
+                Launch App <ArrowRight size={18} />
+              </Link>
+              <Link href="/docs" className="px-10 py-4 bg-white/5 border border-white/10 text-white font-black rounded-[20px] hover:bg-white/10 transition-all">
+                Read the Docs
+              </Link>
+            </div>
           </div>
         </div>
-      </footer>
+      </section>
+
+      <SiteFooter />
 
       {/* Video Demo Modal */}
       <AnimatePresence>

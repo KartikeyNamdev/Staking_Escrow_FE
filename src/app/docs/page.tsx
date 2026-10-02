@@ -12,6 +12,7 @@ import {
   Code2,
   ChevronRight,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -92,6 +93,111 @@ const sections = [
             <p className="text-primary">npm run dev</p>
           </div>
         </div>
+      </div>
+    ),
+  },
+  {
+    id: "how-it-works",
+    title: "How It Works",
+    icon: <Layers size={18} />,
+    content: (
+      <div className="space-y-8">
+        <p className="text-white/60 leading-relaxed">
+          Every tool in SolVault builds a regular Solana transaction in your browser and hands it to
+          your wallet to sign. Here&apos;s what&apos;s happening under the hood.
+        </p>
+
+        <div className="space-y-3">
+          <h3 className="text-xl font-bold text-white">Transaction lifecycle</h3>
+          <ol className="grid gap-3 sm:grid-cols-2">
+            {[
+              ["Build", "Instructions are assembled client-side (System Program, Token Program, ATA Program)."],
+              ["Price", "A recent blockhash is fetched and the exact fee is computed with getFeeForMessage."],
+              ["Sign", "Your wallet signs. Extra signers (like a new mint keypair) partially sign first."],
+              ["Confirm", "We wait for the confirmed commitment level before showing success."],
+            ].map(([t, d], i) => (
+              <li key={t} className="p-5 bg-white/5 border border-white/10 rounded-2xl">
+                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Step {i + 1}</p>
+                <p className="font-bold text-white">{t}</p>
+                <p className="text-sm text-white/40 mt-1">{d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-xl font-bold text-white">Associated Token Accounts (ATAs)</h3>
+          <p className="text-white/60 leading-relaxed">
+            Tokens aren&apos;t stored in your wallet address directly — they live in token accounts. An
+            ATA is the <em>canonical</em> token account for a wallet + mint pair. It&apos;s a Program
+            Derived Address (PDA) of the Associated Token Program:
+          </p>
+          <pre className="p-4 sm:p-6 bg-black rounded-2xl border border-white/5 font-mono text-xs sm:text-sm text-primary overflow-x-auto">
+{`findProgramAddressSync(
+  [owner, TOKEN_PROGRAM_ID, mint],
+  ASSOCIATED_TOKEN_PROGRAM_ID
+) // → [ataAddress, bump]`}
+          </pre>
+          <p className="text-white/40 text-sm">
+            Try it live in <Link href="/dashboard/tokens" className="text-primary font-bold">Dashboard → Tokens</Link>.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-xl font-bold text-white">PDAs in one paragraph</h3>
+          <p className="text-white/60 leading-relaxed">
+            A PDA is an address derived from seeds and a program ID that is guaranteed to be
+            <span className="text-white"> off the ed25519 curve</span> — so no private key exists for
+            it. Only the owning program can sign for it. The <code className="text-primary">bump</code>{" "}
+            is the value that pushes the hash off-curve.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-xl font-bold text-white">Minting a token</h3>
+          <p className="text-white/60 leading-relaxed">
+            The mint tool sends a single transaction with four instructions:{" "}
+            <code className="text-primary">createAccount</code> (82 bytes, rent-exempt),{" "}
+            <code className="text-primary">InitializeMint2</code>,{" "}
+            <code className="text-primary">CreateIdempotent</code> for your ATA, and{" "}
+            <code className="text-primary">MintTo</code> for the initial supply.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "networks",
+    title: "Devnet vs Mainnet",
+    icon: <Shield size={18} />,
+    content: (
+      <div className="space-y-6">
+        <p className="text-white/60 leading-relaxed">
+          Solana runs several independent clusters. Accounts and balances on one do not exist on the
+          others. Switch clusters in <Link href="/dashboard/settings" className="text-primary font-bold">Settings</Link>{" "}
+          — and keep your wallet on the same one.
+        </p>
+        <div className="overflow-x-auto rounded-2xl border border-white/10">
+          <table className="w-full text-sm min-w-[480px]">
+            <thead className="bg-white/5 text-[10px] uppercase tracking-widest text-white/40">
+              <tr>
+                <th className="text-left p-4">Cluster</th>
+                <th className="text-left p-4">SOL value</th>
+                <th className="text-left p-4">Faucet</th>
+                <th className="text-left p-4">Use for</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-white/60">
+              <tr><td className="p-4 font-bold text-primary">Devnet</td><td className="p-4">None</td><td className="p-4">Yes</td><td className="p-4">Building & testing apps</td></tr>
+              <tr><td className="p-4 font-bold text-white">Testnet</td><td className="p-4">None</td><td className="p-4">Yes</td><td className="p-4">Validator / client testing</td></tr>
+              <tr><td className="p-4 font-bold text-orange-400">Mainnet</td><td className="p-4">Real</td><td className="p-4">No</td><td className="p-4">Production</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-white/40 text-sm">
+          Public RPC endpoints are rate limited. For mainnet, use a dedicated provider and paste its URL
+          into Settings → RPC Endpoint.
+        </p>
       </div>
     ),
   },
@@ -241,12 +347,19 @@ export default function DocsPage() {
         </div>
 
         <div className="flex items-center gap-6 shrink-0">
-          <Link
-            href="/dashboard"
-            className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest hidden md:block"
-          >
-            Dashboard
-          </Link>
+          {[
+            ["/about", "About"],
+            ["/pricing", "Pricing"],
+            ["/dashboard", "Dashboard"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest hidden md:block"
+            >
+              {label}
+            </Link>
+          ))}
           <Link
             href="/dashboard"
             className="px-4 sm:px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-black hover:bg-white/10 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
